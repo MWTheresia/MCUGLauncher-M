@@ -85,9 +85,11 @@
   opacity: var(--logo-head-opacity);
 }
 
+/* 底图已经把镐头挖空，这里只负责上色，不会透出原本的青色 */
 /* 镐头主色：logo 里 #11b4dd 那一块 */
 .shell-logo-head {
   background: var(--logo-head-color, transparent);
+  filter: var(--logo-head-filter);
   -webkit-mask: url("../assets/brand/MCUGLogo-head.svg") center / contain no-repeat;
   mask: url("../assets/brand/MCUGLogo-head.svg") center / contain no-repeat;
 }
@@ -95,6 +97,7 @@
 /* 镐头描边：logo 里 #267b90 的那圈深色像素，保持 MC 贴图的轮廓 */
 .shell-logo-head-shade {
   background: var(--logo-head-shade, transparent);
+  filter: var(--logo-head-filter);
   -webkit-mask: url("../assets/brand/MCUGLogo-head-shade.svg") center / contain no-repeat;
   mask: url("../assets/brand/MCUGLogo-head-shade.svg") center / contain no-repeat;
 }
