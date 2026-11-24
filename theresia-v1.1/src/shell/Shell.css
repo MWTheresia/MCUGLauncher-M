@@ -58,14 +58,36 @@
   transition: background-color var(--dur-normal) linear;
 }
 
+/* 图标本体 + 可换色的镐头层：两层同尺寸叠放，镐头层用 mask 只盖住镐头 */
 .shell-logo {
+  position: relative;
+  display: block;
   width: min(52vmin, 620px);
-  height: auto;
+  aspect-ratio: 387.0922 / 445.7289;
   opacity: var(--shell-logo-opacity);
+  transition: opacity var(--dur-normal) linear;
+}
+
+.shell-logo-art {
+  display: block;
+  width: 100%;
+  height: 100%;
   filter: var(--shell-logo-filter);
   user-select: none;
   -webkit-user-drag: none;
-  transition: opacity var(--dur-normal) linear;
+}
+
+.shell-logo-head {
+  position: absolute;
+  inset: 0;
+  display: none;
+  background: var(--logo-head-color, transparent);
+  -webkit-mask: url("../assets/brand/MCUGLogo-head.svg") center / contain no-repeat;
+  mask: url("../assets/brand/MCUGLogo-head.svg") center / contain no-repeat;
+}
+
+:root[data-logo-head="on"] .shell-logo-head {
+  display: block;
 }
 
 

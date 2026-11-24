@@ -193,14 +193,13 @@ export function applyTheme(state: ThemeState): void {
   const root = document.documentElement;
   const palette = ACCENTS.find((item) => item.id === state.accent) ?? ACCENTS[0];
   root.dataset.theme = state.mode;
-  const filter = logoFilterFor(state);
-  if (filter) {
-    root.style.setProperty("--shell-logo-filter", filter);
-    /* 换了材质色之后要压得更实一点，否则水印太淡看不出颜色差别 */
-    root.style.setProperty("--shell-logo-opacity", state.mode === "dark" ? "0.2" : "0.28");
+  const head = logoHeadColor(state);
+  if (head) {
+    root.style.setProperty("--logo-head-color", head);
+    root.dataset.logoHead = "on";
   } else {
-    root.style.removeProperty("--shell-logo-filter");
-    root.style.removeProperty("--shell-logo-opacity");
+    root.style.removeProperty("--logo-head-color");
+    delete root.dataset.logoHead;
   }
 
   const vars = buildAccentVars(palette.base, state.mode);
@@ -211,38 +210,18 @@ export function applyTheme(state: ThemeState): void {
 
 /* ---------------- 背景图标的配色 ---------------- */
 
-function hueOf(hex: string): number {
-  const { r, g, b } = hexToRgb(hex);
-  const rn = r / 255;
-  const gn = g / 255;
-  const bn = b / 255;
-  const max = Math.max(rn, gn, bn);
-  const min = Math.min(rn, gn, bn);
-  const delta = max - min;
-  if (delta === 0) return 0;
-  let hue = 0;
-  if (max === rn) hue = ((gn - bn) / delta) % 6;
-  else if (max === gn) hue = (bn - rn) / delta + 2;
-  else hue = (rn - gn) / delta + 4;
-  return (hue * 60 + 360) % 360;
-}
-
 /**
  * 背景大图标只换色、不换形：
  * 先用 sepia 把彩图压成单色，再用 hue-rotate 旋到目标材质色，最后补一点亮度。
  * 返回 null 表示「默认」，交给 CSS 里的 --shell-logo-filter 兜底。
  */
-export function logoFilterFor(state: ThemeState): string | null {
+/**
+ * 背景大图标里的镐头换成所选材质色：
+ * 只有镐头区域被盖住，木柄、六边形外框和 MCUG 字样保持原样。
+ * 返回 null 表示不改，保留 logo 原本的钻石镐青色。
+ */
+export function logoHeadColor(state: ThemeState): string | null {
   const material = MATERIALS.find((item) => item.id === state.logo);
   if (!material) return null;
-  /* sepia 的基准色约在 35°，因此旋转量要减掉它 */
-  const rotate = Math.round(hueOf(material.base) - 35);
-  const brightness = (state.mode === "dark" ? 1.7 : 0.95) * material.tone;
-  const saturate = state.mode === "dark" ? 2.6 : 3.2;
-  return [
-    "sepia(1)",
-    "saturate(" + saturate + ")",
-    "hue-rotate(" + rotate + "deg)",
-    "brightness(" + brightness + ")",
-  ].join(" ");
+  return state.mode === "dark" ? mix(material.base, "#ffffff", 0.18) : material.base;
 }

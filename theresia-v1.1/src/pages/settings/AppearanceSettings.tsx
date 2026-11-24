@@ -109,7 +109,7 @@ export default function AppearanceSettings({ active }: AppearanceSettingsProps) 
               ))}
             </div>
             <span className="setting-field-note">
-              只换背景那枚大图标的颜色，界面主色不受影响；按挖掘等级排列：木/金 0、石 1、铁 2、钻石 3、下界合金 4。
+              只把背景图标里那把镐的镐头换成对应材质，木柄和外框保持原样；按挖掘等级排列：木/金 0、石 1、铁 2、钻石 3、下界合金 4。
             </span>
           </div>
         </div>

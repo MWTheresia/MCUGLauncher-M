@@ -230,7 +230,10 @@ export default function Shell() {
           <div className="shell-scene">
             {/* 背景层：一块随主题变化的底色 + 居中的大号启动器图标 */}
             <div className="shell-bg" aria-hidden="true">
-              <img className="shell-logo" src="/MCUGLogo.svg" alt="" />
+              <span className="shell-logo">
+                <img className="shell-logo-art" src="/MCUGLogo.svg" alt="" />
+                <span className="shell-logo-head" />
+              </span>
             </div>
             <main className="page-host">
               {error.length > 0 ? <div className="backend-error">{error}</div> : null}
