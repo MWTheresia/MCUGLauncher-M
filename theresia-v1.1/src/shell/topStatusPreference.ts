@@ -46,3 +46,34 @@ export function useTopStatusForced(target: TopStatusTarget): boolean {
 
   return value;
 }
+
+/** 开发用：不看真实进程，直接把左下角的实例灯钉在某个状态上。 */
+const PREVIEW_KEY = "mcugl.topStatusPreviewInstances";
+
+/** 实例灯的预览数量：0 表示不预览（按真实进程），1 / 2 表示钉死成这个数量。 */
+export type InstancePreview = 0 | 1 | 2;
+
+export function getInstancePreview(): InstancePreview {
+  const raw = localStorage.getItem(PREVIEW_KEY);
+  return raw === "1" ? 1 : raw === "2" ? 2 : 0;
+}
+
+export function setInstancePreview(value: InstancePreview): void {
+  if (value === 0) localStorage.removeItem(PREVIEW_KEY);
+  else localStorage.setItem(PREVIEW_KEY, String(value));
+  listeners.forEach((listener) => listener());
+}
+
+export function useInstancePreview(): InstancePreview {
+  const [value, setValue] = useState<InstancePreview>(() => getInstancePreview());
+
+  useEffect(() => {
+    const listener = () => setValue(getInstancePreview());
+    listeners.add(listener);
+    return () => {
+      listeners.delete(listener);
+    };
+  }, []);
+
+  return value;
+}

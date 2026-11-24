@@ -5,7 +5,7 @@ import { taskAction } from "../api/commands/tasks";
 import SvgIcon from "../components/SvgIcon";
 import { useLauncher } from "../state/launcher";
 import type { GameSessionInfo, TaskInfo } from "../types/launcher";
-import { useTopStatusForced } from "./topStatusPreference";
+import { useInstancePreview, useTopStatusForced } from "./topStatusPreference";
 import "./TopStatusButtons.css";
 
 type StatusKey = "games" | "tasks";
@@ -51,6 +51,8 @@ function taskPercent(task: TaskInfo): number | null {
 export default function TopStatus() {
   const { games, tasks, instances, refreshGames, refreshTasks } = useLauncher();
   const forceTasks = useTopStatusForced("tasks");
+  /** 开发者选项里的预览：把实例灯钉在 1 个 / 2 个的状态上 */
+  const instancePreview = useInstancePreview();
   const gamesRef = useRef<HTMLDivElement>(null);
   const tasksRef = useRef<HTMLDivElement>(null);
 
@@ -158,7 +160,8 @@ export default function TopStatus() {
     }
   };
 
-  const count = runningGames.length;
+  const realCount = runningGames.length;
+  const count = instancePreview > 0 ? instancePreview : realCount;
   const live = count > 0;
 
   return (

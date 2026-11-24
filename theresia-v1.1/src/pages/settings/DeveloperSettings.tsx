@@ -15,7 +15,13 @@ import Modal from "../../components/Modal";
 import SvgIcon from "../../components/SvgIcon";
 import cubeIcon from "../../assets/icons/ui/cube.svg";
 import downloadIcon from "../../assets/icons/ui/download.svg";
-import { setTopStatusForced, useTopStatusForced } from "../../shell/topStatusPreference";
+import {
+  setInstancePreview,
+  setTopStatusForced,
+  useInstancePreview,
+  useTopStatusForced,
+  type InstancePreview,
+} from "../../shell/topStatusPreference";
 import SettingRow from "./SettingRow";
 import SettingsCard from "./SettingsCard";
 import { useSettingsData } from "./SettingsData";
@@ -38,6 +44,7 @@ function fileName(path: string): string {
 /** 开发者选项：状态栏按钮、第三方前端与运行日志。 */
 export default function DeveloperSettings({ active }: DeveloperSettingsProps) {
   const forceTasks = useTopStatusForced("tasks");
+  const instancePreview = useInstancePreview();
   const { say, statusAt } = useSettingsStatus();
   const { resourceVersions, refreshSettingsResources } = useSettingsData();
   const [log, setLog] = useState("");
@@ -272,6 +279,35 @@ export default function DeveloperSettings({ active }: DeveloperSettingsProps) {
             </button>
           }
         />
+        <SettingRow
+          title={<>实例状态灯预览</>}
+          control={
+            <div className="segmented" role="radiogroup" aria-label="实例状态灯预览">
+              {(
+                [
+                  [0, "按实际"],
+                  [1, "1 个实例"],
+                  [2, "2 个实例"],
+                ] as const
+              ).map(([value, label]) => (
+                <button
+                  key={value}
+                  type="button"
+                  role="radio"
+                  aria-checked={instancePreview === value}
+                  className={`segmented-option${instancePreview === value ? " is-selected" : ""}`}
+                  onClick={() => setInstancePreview(value as InstancePreview)}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          }
+        >
+          <span className="muted">
+            选「1 个实例」是绿屏无数字，「2 个实例」是绿屏带数字；只看效果，不会真的启动游戏。
+          </span>
+        </SettingRow>
       </SettingsCard>
 
       <SettingsCard
