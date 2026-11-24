@@ -56,14 +56,8 @@
   --app-sunken: #edf2f8;
   --app-scrim: rgb(233 239 246 / 22%);
 
-  /* ---------- 整窗背景：一层主题底色 + 居中的启动器图标底纹 ---------- */
-  --shell-backdrop:
-    radial-gradient(120% 80% at 50% 0%, #ffffff 0%, #f3f7fb 42%, #e6edf6 100%);
-  /* 浅色下保留logo本身的配色，但降饱和 + 提亮，让它退成很淡的一层底纹 */
-  --shell-logo-opacity: 0.16;
-  --logo-head-opacity: 0.45;
-  --logo-head-filter: saturate(1.05) brightness(1);
-  --shell-logo-filter: saturate(1.35) brightness(1.04);
+  /* ---------- 整窗背景：纯色 ---------- */
+  --shell-backdrop: #eef3f9;
 
   /* ---------- 新拟态（Neumorphism） ----------
    * 软表面的核心是「同一底色 + 一明一暗两道投影」：左上受光、右下背光。
@@ -224,15 +218,8 @@
   --neu-inset: inset 0 1px 3px rgb(0 0 0 / 45%);
   --neu-inset-sm: inset 0 1px 2px rgb(0 0 0 / 40%);
 
-  /* 深色下图标本身是深色，压暗改为提亮一点、并把透明度调高 */
   --app-scrim: rgb(6 10 16 / 62%);
-  --shell-backdrop:
-    radial-gradient(120% 80% at 50% 0%, #16202c 0%, #0d141d 46%, #070b11 100%);
-  /* 深色下不再去彩度，只整体提亮，让镐头之外的蓝/木色也站得住 */
-  --shell-logo-opacity: 0.2;
-  --logo-head-opacity: 0.42;
-  --logo-head-filter: saturate(1) brightness(1.15);
-  --shell-logo-filter: saturate(1.3) brightness(1.5);
+  --shell-backdrop: #0b1219;
 
   --orb-idle: #b97a7e;
   --orb-live: #6ea98c;

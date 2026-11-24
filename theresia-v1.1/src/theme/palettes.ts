@@ -34,39 +34,15 @@ export const ACCENTS: AccentPalette[] = [
   { id: "coffee", label: "咖啡", base: "#b45309" },
 ];
 
-/**
- * 材质：只用来给背景那枚大图标换色，不影响界面主色。
- * 顺序按 Minecraft 的挖掘等级（harvest level）排：木/金 0、石 1、铁 2、钻石 3、下界合金 4。
- */
-export interface MaterialPalette {
-  id: string;
-  label: string;
-  level: number;
-  base: string;
-  /** 描边色：MC 贴图里那圈深色轮廓，换材质时跟着一起换 */
-  shade: string;
-}
-
-export const MATERIALS: MaterialPalette[] = [
-  { id: "wood", label: "木", level: 0, base: "#b5793a", shade: "#6f4a24" },
-  { id: "gold", label: "金", level: 0, base: "#f7c948", shade: "#b07f14" },
-  { id: "stone", label: "石", level: 1, base: "#7d838a", shade: "#4f545a" },
-  { id: "iron", label: "铁", level: 2, base: "#dadfe4", shade: "#9aa3ac" },
-  { id: "diamond", label: "钻石", level: 3, base: "#11b4dd", shade: "#267b90" },
-  { id: "netherite", label: "下界合金", level: 4, base: "#6b5a76", shade: "#453a4d" },
-];
-
 export interface ThemeState {
   accent: string;
   mode: ThemeMode;
-  /** 背景图标的材质色；空串表示默认（保留 logo 原色） */
-  logo: string;
 }
 
 const STORAGE_KEY = "mcugl.theme.v1";
 const DARK_SURFACE = "#0c1117";
 
-export const DEFAULT_THEME: ThemeState = { accent: "blue", mode: "light", logo: "diamond" };
+export const DEFAULT_THEME: ThemeState = { accent: "blue", mode: "light" };
 
 /* ---------------- 颜色计算 ---------------- */
 
@@ -173,9 +149,7 @@ export function loadTheme(): ThemeState {
     const parsed = JSON.parse(raw) as Partial<ThemeState>;
     const accent = ACCENTS.some((item) => item.id === parsed.accent) ? parsed.accent! : DEFAULT_THEME.accent;
     const mode: ThemeMode = parsed.mode === "dark" ? "dark" : "light";
-    /* 旧数据里没有 logo 字段（当时空串表示默认），一律当作钻石镐 */
-    const logo = MATERIALS.some((item) => item.id === parsed.logo) ? parsed.logo! : DEFAULT_THEME.logo;
-    return { accent, mode, logo };
+    return { accent, mode };
   } catch {
     return { ...DEFAULT_THEME };
   }
@@ -194,12 +168,6 @@ export function applyTheme(state: ThemeState): void {
   const root = document.documentElement;
   const palette = ACCENTS.find((item) => item.id === state.accent) ?? ACCENTS[0];
   root.dataset.theme = state.mode;
-  const head = logoHeadColors(state);
-  if (head) {
-    root.style.setProperty("--logo-head-color", head.fill);
-    root.style.setProperty("--logo-head-shade", head.shade);
-  }
-
   const vars = buildAccentVars(palette.base, state.mode);
   for (const [name, value] of Object.entries(vars)) {
     root.style.setProperty(name, value);
@@ -218,19 +186,4 @@ export function applyTheme(state: ThemeState): void {
  * 只有镐头区域被盖住，木柄、六边形外框和 MCUG 字样保持原样。
  * 返回 null 表示不改，保留 logo 原本的钻石镐青色。
  */
-/**
- * 背景图标里镐头的两层颜色：
- * - fill 对应 logo 里 #11b4dd 的主色块
- * - shade 对应 #267b90 的那圈像素描边，保持 MC 贴图的深色轮廓
- * 只影响镐头，木柄、六边形外框和 MCUG 字样都不动。
- */
-export function logoHeadColors(state: ThemeState): { fill: string; shade: string } | null {
-  const material = MATERIALS.find((item) => item.id === state.logo) ?? MATERIALS[4];
-  if (state.mode === "dark") {
-    return {
-      fill: mix(material.base, "#ffffff", 0.12),
-      shade: mix(material.shade, "#ffffff", 0.12),
-    };
-  }
-  return { fill: material.base, shade: material.shade };
-}
+

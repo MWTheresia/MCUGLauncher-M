@@ -15,7 +15,7 @@ interface AppearanceSettingsProps {
 /** 外观：主题（16 色板 + 明暗）、语言、主页对齐与窗口。 */
 export default function AppearanceSettings({ active }: AppearanceSettingsProps) {
   const { locale, setLocale, t, packs, labelOf, builtinCodes, importPack, removePack } = useI18n();
-  const { accent, mode, logo, palettes, materials, setAccent, setMode, setLogoMaterial } = useTheme();
+  const { accent, mode, palettes, setAccent, setMode } = useTheme();
   const [languageStatus, setLanguageStatus] = useState("");
   const [windowStatus, setWindowStatus] = useState("");
   const homeAlignment = useHomeAlignment();
@@ -72,35 +72,6 @@ export default function AppearanceSettings({ active }: AppearanceSettingsProps) 
         </div>
 
 
-        <div className="setting-field">
-          <span className="setting-field-label">背景图标</span>
-          <div className="setting-field-body">
-            <div className="logo-materials" role="radiogroup" aria-label="背景图标材质色">
-              {materials.map((material) => (
-                <button
-                  key={material.id}
-                  type="button"
-                  role="radio"
-                  aria-checked={logo === material.id}
-                  aria-label={material.label}
-                  title={`${material.label} · 挖掘等级 ${material.level}`}
-                  className={`logo-material${logo === material.id ? " is-selected" : ""}`}
-                  style={{ ["--material-color" as string]: material.base }}
-                  onClick={() => setLogoMaterial(material.id)}
-                >
-                  <span className="pickaxe" aria-hidden="true">
-                    <span className="pickaxe-handle" />
-                    <span className="pickaxe-head" />
-                  </span>
-                  <span className="logo-material-label">{material.label}</span>
-                </button>
-              ))}
-            </div>
-            <span className="setting-field-note">
-              只把背景图标里那把镐的镐头换成对应材质，木柄和外框保持原样；按挖掘等级排列：木/金 0、石 1、铁 2、钻石 3、下界合金 4。
-            </span>
-          </div>
-        </div>
         <div className="setting-field">
           <span className="setting-field-label">明暗模式</span>
           <div className="setting-field-body">

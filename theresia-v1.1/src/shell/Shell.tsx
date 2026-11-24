@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
-import logoBody from "../assets/brand/MCUGLogo-body.svg";
 import DiscoverIcon from "../assets/icons/capsule/DiscoverIcon.svg";
 import DiscoverIconActive from "../assets/icons/capsule/DiscoverIconActive.svg";
 import accountIcon from "../assets/icons/capsule/AccountIcon.svg";
@@ -230,13 +229,7 @@ export default function Shell() {
         <div className="glass-source">
           <div className="shell-scene">
             {/* 背景层：一块随主题变化的底色 + 居中的大号启动器图标 */}
-            <div className="shell-bg" aria-hidden="true">
-              <span className="shell-logo">
-                <img className="shell-logo-art" src={logoBody} alt="" />
-                <span className="shell-logo-head" />
-                <span className="shell-logo-head-shade" />
-              </span>
-            </div>
+            <div className="shell-bg" aria-hidden="true" />
             <main className="page-host">
               {error.length > 0 ? <div className="backend-error">{error}</div> : null}
               <div className={stageClass}>
