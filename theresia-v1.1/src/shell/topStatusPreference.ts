@@ -77,3 +77,29 @@ export function useInstancePreview(): InstancePreview {
 
   return value;
 }
+/** 开发用：不看真实任务，循环播放「倒三角填充 → 变绿翻正 → 消失」的下载动画。 */
+const ANIM_KEY = "mcugl.topStatusForceDownloadAnim";
+
+export function isDownloadAnimForced(): boolean {
+  return localStorage.getItem(ANIM_KEY) === "1";
+}
+
+export function setDownloadAnimForced(value: boolean): void {
+  if (value) localStorage.setItem(ANIM_KEY, "1");
+  else localStorage.removeItem(ANIM_KEY);
+  listeners.forEach((listener) => listener());
+}
+
+export function useDownloadAnimForced(): boolean {
+  const [value, setValue] = useState(() => isDownloadAnimForced());
+
+  useEffect(() => {
+    const listener = () => setValue(isDownloadAnimForced());
+    listeners.add(listener);
+    return () => {
+      listeners.delete(listener);
+    };
+  }, []);
+
+  return value;
+}

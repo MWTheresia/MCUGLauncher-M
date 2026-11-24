@@ -1,11 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import navTasks from "../assets/icons/nav/nav-tasks.svg";
 import { stopGame } from "../api/commands/games";
 import { taskAction } from "../api/commands/tasks";
-import SvgIcon from "../components/SvgIcon";
 import { useLauncher } from "../state/launcher";
 import type { GameSessionInfo, TaskInfo } from "../types/launcher";
-import { useInstancePreview, useTopStatusForced } from "./topStatusPreference";
+import { useDownloadAnimForced, useInstancePreview, useTopStatusForced } from "./topStatusPreference";
 import "./TopStatusButtons.css";
 
 type StatusKey = "games" | "tasks";
@@ -53,6 +51,7 @@ export default function TopStatus() {
   const forceTasks = useTopStatusForced("tasks");
   /** 开发者选项里的预览：把实例灯钉在 1 个 / 2 个的状态上 */
   const instancePreview = useInstancePreview();
+  const forceDownloadAnim = useDownloadAnimForced();
   const gamesRef = useRef<HTMLDivElement>(null);
   const tasksRef = useRef<HTMLDivElement>(null);
 
@@ -164,6 +163,64 @@ export default function TopStatus() {
   const count = instancePreview > 0 ? instancePreview : realCount;
   const live = count > 0;
 
+  /*
+   * 下载进度：多个任务取平均值；没有任务就是 0。
+   * 满了之后先播「翻正 + 变绿」，再让圆淡出，避免任务一结束图标就凭空消失。
+   */
+  const realPercent = activeTasks.length
+    ? Math.round(
+        activeTasks.reduce((sum, task) => sum + (taskPercent(task) ?? 0), 0) / activeTasks.length
+      )
+    : 0;
+
+  /** 开发者选项里的强制动画：0→100 循环，方便看完整过程。 */
+  const [simPercent, setSimPercent] = useState(0);
+  useEffect(() => {
+    if (!forceDownloadAnim) {
+      setSimPercent(0);
+      return;
+    }
+    let value = 0;
+    let holding = false;
+    let cancelled = false;
+    const timer = window.setInterval(() => {
+      if (holding) return;
+      value = Math.min(100, value + 2);
+      setSimPercent(value);
+      if (value < 100) return;
+      // 满格先停住，让「翻正 + 变绿」播完，再从头开始
+      holding = true;
+      window.setTimeout(() => {
+        if (cancelled) return;
+        value = 0;
+        holding = false;
+        setSimPercent(0);
+      }, 1200);
+    }, 70);
+    return () => {
+      cancelled = true;
+      window.clearInterval(timer);
+    };
+  }, [forceDownloadAnim]);
+
+  const percent = forceDownloadAnim ? simPercent : realPercent;
+
+  /** 进度到 100 时进入完成态：翻正、变绿、停 1.2 秒再淡出。 */
+  const [finishing, setFinishing] = useState(false);
+  const previousPercent = useRef(0);
+  useEffect(() => {
+    if (previousPercent.current < 100 && percent >= 100) {
+      setFinishing(true);
+      previousPercent.current = percent;
+      const timer = window.setTimeout(() => setFinishing(false), 1200);
+      return () => window.clearTimeout(timer);
+    }
+    previousPercent.current = percent;
+    return undefined;
+  }, [percent]);
+
+  const downloadsVisible = forceDownloadAnim || showTasks || finishing;
+
   return (
     <>
       {/* 左下角常驻：电脑屏幕就是状态灯 */}
@@ -226,20 +283,25 @@ export default function TopStatus() {
         ) : null}
       </div>
 
-      {/* 右上角：下载任务，只有存在未结束任务时才出现 */}
-      {showTasks ? (
+      {/* 左下角、实例灯右边：下载进度三角 */}
+      {downloadsVisible ? (
         <div className="orb downloads" ref={tasksRef}>
           <button
             type="button"
-            className={`orb-button${open === "tasks" ? " is-open" : ""}`}
-            aria-label="下载任务"
+            className={`orb-button orb-download${open === "tasks" ? " is-open" : ""}${
+              finishing ? " is-done" : ""
+            }`}
+            aria-label={`下载任务，进度 ${percent}%`}
             aria-haspopup="dialog"
             aria-expanded={open === "tasks"}
-            data-tip="下载任务"
-            data-tip-side="bottom"
+            data-tip={activeTasks.length > 0 ? `下载中 ${percent}%` : "下载任务"}
+            data-tip-side="right"
             onClick={() => toggle("tasks")}
           >
-            <SvgIcon className="orb-icon" src={navTasks} />
+            {/* 倒三角：红色从下往上填充；满 100% 时翻 180° 变正三角并转绿 */}
+            <span className="orb-triangle" aria-hidden="true">
+              <span className="orb-triangle-fill" style={{ height: `${percent}%` }} />
+            </span>
           </button>
 
           {open === "tasks" ? (

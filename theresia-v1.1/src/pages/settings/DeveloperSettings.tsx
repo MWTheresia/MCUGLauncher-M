@@ -18,8 +18,10 @@ import downloadIcon from "../../assets/icons/ui/download.svg";
 import {
   setInstancePreview,
   setTopStatusForced,
+  useDownloadAnimForced,
   useInstancePreview,
   useTopStatusForced,
+  setDownloadAnimForced,
   type InstancePreview,
 } from "../../shell/topStatusPreference";
 import SettingRow from "./SettingRow";
@@ -45,6 +47,7 @@ function fileName(path: string): string {
 export default function DeveloperSettings({ active }: DeveloperSettingsProps) {
   const forceTasks = useTopStatusForced("tasks");
   const instancePreview = useInstancePreview();
+  const downloadAnimForced = useDownloadAnimForced();
   const { say, statusAt } = useSettingsStatus();
   const { resourceVersions, refreshSettingsResources } = useSettingsData();
   const [log, setLog] = useState("");
@@ -279,6 +282,25 @@ export default function DeveloperSettings({ active }: DeveloperSettingsProps) {
             </button>
           }
         />
+        <SettingRow
+          title={<>强制播放下载动画</>}
+          control={
+            <button
+              type="button"
+              role="switch"
+              aria-checked={downloadAnimForced}
+              aria-label="强制播放下载动画"
+              className={`switch${downloadAnimForced ? " on" : ""}`}
+              onClick={() => setDownloadAnimForced(!downloadAnimForced)}
+            >
+              <span className="switch-thumb" />
+            </button>
+          }
+        >
+          <span className="muted">
+            循环播放：倒三角红色自下而上填满 → 翻成正三角变绿 → 消失。
+          </span>
+        </SettingRow>
         <SettingRow
           title={<>实例状态灯预览</>}
           control={
