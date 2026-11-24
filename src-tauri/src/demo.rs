@@ -82,16 +82,13 @@ impl Data {
                 .unwrap_or_else(|_| "epoch-demo".into()),
             revisions: ResourceRevisions::default(),
             state: demo_state(),
-            tasks: demo_tasks(),
-            games: vec![GameSessionInfo {
-                session_id: "session-demo-running".into(),
-                instance_id: "instance-mcug-1211".into(),
-                account_id: "account-demo-microsoft".into(),
-                status: "running".into(),
-                pid: Some(24188),
-                exit_code: None,
-                error: None,
-            }],
+            /*
+             * 启动时保持「什么都没在跑」：种子数据里不再伪造运行中的游戏会话和下载任务。
+             * 否则第一次打开就会看到绿色的实例灯和下载进度球，像是后台真的有东西在跑。
+             * 想看这两种状态：真的点一次启动 / 下载，或用开发者选项里的预览开关。
+             */
+            tasks: Vec::new(),
+            games: Vec::new(),
             community: demo_community(),
             avatar: avatar_for("XiaoMu", "microsoft"),
             backups: vec![

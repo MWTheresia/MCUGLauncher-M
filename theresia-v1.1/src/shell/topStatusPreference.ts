@@ -20,6 +20,15 @@ function migrateLegacyKey(): void {
 
 migrateLegacyKey();
 
+/*
+ * 上一版把「强制下载动画 / 实例灯预览」写进了 localStorage，
+ * 升级后这些残留会让下次启动凭空冒出下载球或绿色实例灯。
+ * 预览类状态现在只存 sessionStorage，这里顺手把旧键清掉。
+ */
+for (const legacy of ["mcugl.topStatusPreviewInstances", "mcugl.topStatusForceDownloadAnim"]) {
+  localStorage.removeItem(legacy);
+}
+
 const listeners = new Set<() => void>();
 
 export function isTopStatusForced(target: TopStatusTarget): boolean {
@@ -50,17 +59,24 @@ export function useTopStatusForced(target: TopStatusTarget): boolean {
 /** 开发用：不看真实进程，直接把左下角的实例灯钉在某个状态上。 */
 const PREVIEW_KEY = "mcugl.topStatusPreviewInstances";
 
+/**
+ * 预览类开关只存 sessionStorage：
+ * 它们是给设计验收用的，重启后必须回到真实状态，
+ * 否则上次留下的「强制动画」会让下次启动莫名其妙冒出下载球。
+ */
+const previewStorage = () => window.sessionStorage;
+
 /** 实例灯的预览数量：0 表示不预览（按真实进程），1 / 2 表示钉死成这个数量。 */
 export type InstancePreview = 0 | 1 | 2;
 
 export function getInstancePreview(): InstancePreview {
-  const raw = localStorage.getItem(PREVIEW_KEY);
+  const raw = previewStorage().getItem(PREVIEW_KEY);
   return raw === "1" ? 1 : raw === "2" ? 2 : 0;
 }
 
 export function setInstancePreview(value: InstancePreview): void {
-  if (value === 0) localStorage.removeItem(PREVIEW_KEY);
-  else localStorage.setItem(PREVIEW_KEY, String(value));
+  if (value === 0) previewStorage().removeItem(PREVIEW_KEY);
+  else previewStorage().setItem(PREVIEW_KEY, String(value));
   listeners.forEach((listener) => listener());
 }
 
@@ -81,12 +97,12 @@ export function useInstancePreview(): InstancePreview {
 const ANIM_KEY = "mcugl.topStatusForceDownloadAnim";
 
 export function isDownloadAnimForced(): boolean {
-  return localStorage.getItem(ANIM_KEY) === "1";
+  return previewStorage().getItem(ANIM_KEY) === "1";
 }
 
 export function setDownloadAnimForced(value: boolean): void {
-  if (value) localStorage.setItem(ANIM_KEY, "1");
-  else localStorage.removeItem(ANIM_KEY);
+  if (value) previewStorage().setItem(ANIM_KEY, "1");
+  else previewStorage().removeItem(ANIM_KEY);
   listeners.forEach((listener) => listener());
 }
 
