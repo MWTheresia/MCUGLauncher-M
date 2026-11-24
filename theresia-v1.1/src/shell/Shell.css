@@ -64,7 +64,6 @@
   display: block;
   width: min(52vmin, 620px);
   aspect-ratio: 387.0922 / 445.7289;
-  opacity: var(--shell-logo-opacity);
   transition: opacity var(--dur-normal) linear;
 }
 
@@ -72,22 +71,32 @@
   display: block;
   width: 100%;
   height: 100%;
+  opacity: var(--shell-logo-opacity);
   filter: var(--shell-logo-filter);
   user-select: none;
   -webkit-user-drag: none;
 }
 
-.shell-logo-head {
+.shell-logo-head,
+.shell-logo-head-shade {
   position: absolute;
   inset: 0;
-  display: none;
+  /* 镐头是「当前材质」的焦点，比整体水印更实一点，否则浅底上会被冲淡 */
+  opacity: var(--logo-head-opacity);
+}
+
+/* 镐头主色：logo 里 #11b4dd 那一块 */
+.shell-logo-head {
   background: var(--logo-head-color, transparent);
   -webkit-mask: url("../assets/brand/MCUGLogo-head.svg") center / contain no-repeat;
   mask: url("../assets/brand/MCUGLogo-head.svg") center / contain no-repeat;
 }
 
-:root[data-logo-head="on"] .shell-logo-head {
-  display: block;
+/* 镐头描边：logo 里 #267b90 的那圈深色像素，保持 MC 贴图的轮廓 */
+.shell-logo-head-shade {
+  background: var(--logo-head-shade, transparent);
+  -webkit-mask: url("../assets/brand/MCUGLogo-head-shade.svg") center / contain no-repeat;
+  mask: url("../assets/brand/MCUGLogo-head-shade.svg") center / contain no-repeat;
 }
 
 

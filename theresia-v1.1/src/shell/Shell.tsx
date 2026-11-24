@@ -233,6 +233,7 @@ export default function Shell() {
               <span className="shell-logo">
                 <img className="shell-logo-art" src="/MCUGLogo.svg" alt="" />
                 <span className="shell-logo-head" />
+                <span className="shell-logo-head-shade" />
               </span>
             </div>
             <main className="page-host">

@@ -7,7 +7,7 @@ MCUG Launcher 的第三方前端：整体替换启动器界面，不改动官方
 - **版本**：`1.1.0`（新拟态重塑）
 - **内核契约**：`mcugl.kernel/v1`（`^1.0.0`）
 - **产物**：`release/com.theresia.mcugl-1.1.0.mcuglf`
-- **sha256**：`67669b49571d97a93d9eca721cca069e7801e655e569d21930afdc8510abf8c2`
+- **sha256**：`8993a11e48f0779eee99e3bd0b16ab3fa7f33d9c914fb7d8d05a9f699e66349d`
 
 ---
 

@@ -60,7 +60,8 @@
   --shell-backdrop:
     radial-gradient(120% 80% at 50% 0%, #ffffff 0%, #f3f7fb 42%, #e6edf6 100%);
   /* 浅色下保留logo本身的配色，但降饱和 + 提亮，让它退成很淡的一层底纹 */
-  --shell-logo-opacity: 0.16;
+  --shell-logo-opacity: 0.18;
+  --logo-head-opacity: 0.64;
   --shell-logo-filter: saturate(1.35) brightness(1.04);
 
   /* ---------- 新拟态（Neumorphism） ----------
@@ -227,7 +228,8 @@
   --shell-backdrop:
     radial-gradient(120% 80% at 50% 0%, #16202c 0%, #0d141d 46%, #070b11 100%);
   /* 深色下不再去彩度，只整体提亮，让镐头之外的蓝/木色也站得住 */
-  --shell-logo-opacity: 0.2;
+  --shell-logo-opacity: 0.22;
+  --logo-head-opacity: 0.54;
   --shell-logo-filter: saturate(1.3) brightness(1.5);
 
   --orb-idle: #b97a7e;

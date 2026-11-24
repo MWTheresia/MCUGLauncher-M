@@ -76,18 +76,6 @@ export default function AppearanceSettings({ active }: AppearanceSettingsProps) 
           <span className="setting-field-label">背景图标</span>
           <div className="setting-field-body">
             <div className="logo-materials" role="radiogroup" aria-label="背景图标材质色">
-              <button
-                type="button"
-                role="radio"
-                aria-checked={logo === ""}
-                aria-label="默认"
-                title="默认：保留 logo 原色"
-                className={`logo-material${logo === "" ? " is-selected" : ""}`}
-                onClick={() => setLogoMaterial("")}
-              >
-                <span className="logo-material-icon logo-material-icon-default" />
-                <span className="logo-material-label">默认</span>
-              </button>
               {materials.map((material) => (
                 <button
                   key={material.id}
