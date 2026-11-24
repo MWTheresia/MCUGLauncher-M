@@ -1,15 +1,15 @@
 {
-  "name": "theresia-v1",
+  "name": "theresia-v2",
   "private": true,
-  "version": "1.0.0",
+  "version": "2.0.0",
   "type": "module",
-  "description": "Theresia V1：MCUG Launcher 的第三方前端（16 色主题 / 明暗双模式 / 实例轨道首页）",
+  "description": "Theresia V2：MCUG Launcher 的第三方前端（16 色主题 / 明暗双模式 / 实例轨道首页）",
   "scripts": {
     "dev": "vite",
     "dev:demo": "vite --mode demo",
     "build": "tsc && vite build",
     "typecheck": "tsc --noEmit",
-    "pack": "node ../scripts/pack-frontend.mjs dist --out release/com.theresia.mcugl-1.0.0.mcuglf"
+    "pack": "node ../scripts/pack-frontend.mjs dist --out release/com.theresia.mcugl-2.0.0.mcuglf"
   },
   "dependencies": {
     "@chakra-ui/react": "^3.38.0",

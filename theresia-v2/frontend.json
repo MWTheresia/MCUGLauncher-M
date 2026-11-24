@@ -1,7 +1,7 @@
 {
   "identifier": "com.theresia.mcugl",
-  "name": "Theresia V1",
-  "version": "1.0.0",
+  "name": "Theresia V2",
+  "version": "2.0.0",
   "kernelApi": "^1.0.0",
   "entry": "index.html",
   "author": "Theresia",

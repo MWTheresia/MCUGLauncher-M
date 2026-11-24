@@ -123,7 +123,7 @@
   z-index: 1;
   border-radius: 999px;
   background: var(--nav-chip-fill);
-  box-shadow: 0 1px 2px rgb(var(--app-shade-rgb) / 10%), 0 4px 12px rgb(var(--app-shade-rgb) / 8%);
+  box-shadow: var(--neu-shadow-sm);
   pointer-events: none;
   /* 平时只过渡 opacity：位置变化由 .slide 负责 */
   transition: opacity 120ms linear;
@@ -185,18 +185,12 @@
 }
 
 /*
- * 玻璃条本身：导航压在壁纸上，深色树影会透上来，所以这里比内容卡更实（88%），
- * 再加一层顶光和内阴影，让胶囊看起来是浮起来的实体，而不是一张半透明塑料片。
+ * 新拟态胶囊：不再靠透明度和模糊，而是一明一暗两道投影把它从壁纸上「顶」起来。
  */
 .nav-scene-bar {
   border-radius: 999px;
-  box-shadow:
-    var(--app-glass-edge),
-    0 10px 30px rgb(var(--app-shade-rgb) / 16%),
-    0 2px 6px rgb(var(--app-shade-rgb) / 8%),
-    inset 0 -1px 0 rgb(var(--app-shade-rgb) / 5%);
+  box-shadow: var(--neu-shadow);
   background-color: var(--nav-bar-fill);
-  backdrop-filter: blur(30px) saturate(150%);
 }
 
 .nav-pill .btn.topnav img {
@@ -267,11 +261,8 @@
   inset: 0;
   z-index: 0;
   border-radius: 18px;
-  background-color: var(--app-glass);
-  background-image: var(--app-glass-grain);
-  background-size: 160px 160px;
-  backdrop-filter: blur(18px) saturate(140%);
-  box-shadow: var(--shadow-card);
+  background-color: var(--neu-panel);
+  box-shadow: var(--neu-shadow-lg);
   pointer-events: none;
   opacity: 0;
 }

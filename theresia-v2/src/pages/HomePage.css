@@ -20,11 +20,8 @@
   width: 296px;
   max-height: calc(100% - 100px);
   border-radius: var(--radius-panel);
-  background-color: var(--app-glass);
-  background-image: var(--app-glass-grain);
-  background-size: 160px 160px;
-  backdrop-filter: var(--app-glass-blur-strong);
-  box-shadow: var(--app-glass-edge), var(--shadow-nav);
+  background-color: var(--neu-panel);
+  box-shadow: var(--neu-shadow-lg);
   overflow: hidden;
   animation: rail-in var(--dur-slow) var(--ease-out) both;
 }
@@ -133,12 +130,14 @@
 }
 
 .instance-tile:hover {
-  background: rgb(var(--app-fill-rgb) / 62%);
+  background: var(--neu-surface-2);
+  box-shadow: var(--neu-shadow-sm);
 }
 
+/* 当前实例向内凹：一眼看出「这个被按下了」 */
 .instance-tile.is-current {
-  background: rgb(var(--app-fill-rgb) / 92%);
-  box-shadow: 0 2px 8px rgb(var(--app-shade-rgb) / 8%);
+  background: var(--neu-field);
+  box-shadow: var(--neu-inset-sm);
 }
 
 /* 当前实例左侧的蓝色标记条 */
@@ -226,7 +225,8 @@
   margin: 0 10px 10px;
   border: 0;
   border-radius: 10px;
-  background: rgb(var(--app-fill-rgb) / 58%);
+  background: var(--neu-surface-2);
+  box-shadow: var(--neu-shadow-sm);
   color: var(--app-ink-2);
   font-size: var(--text-sm);
   font-weight: 500;
@@ -278,11 +278,8 @@
 .player-pin {
   position: relative;
   border-radius: 16px;
-  background-color: var(--app-glass-strong);
-  background-image: var(--app-glass-grain);
-  background-size: 160px 160px;
-  backdrop-filter: var(--app-glass-blur-strong);
-  box-shadow: var(--app-glass-edge), var(--shadow-nav);
+  background-color: var(--neu-surface-2);
+  box-shadow: var(--neu-shadow);
   transition: box-shadow var(--dur-fast) var(--ease-out);
 }
 
@@ -482,9 +479,8 @@
   max-width: 240px;
   padding: 3px 10px;
   border-radius: var(--radius-pill);
-  background: rgb(var(--app-fill-rgb) / 72%);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 1px 3px rgb(var(--app-shade-rgb) / 10%);
+  background: var(--neu-surface-2);
+  box-shadow: var(--neu-shadow-sm);
   color: var(--app-ink-2);
   font-size: var(--text-xs);
   font-weight: 600;

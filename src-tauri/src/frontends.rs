@@ -1001,38 +1001,48 @@ mod tests {
         assert!(error.message().contains("图标"), "{}", error.message());
     }
 
-    /// 端到端：仓库里那份真实分发包（Theresia V1）必须能通过同一套校验装进来。
+    /// 端到端：仓库里随包发布的真实 `.mcuglf` 必须能通过同一套校验装进来。
+    /// 目前有两份：theresia-v1（1.0.0，玻璃拟态）与 theresia-v2（2.0.0，新拟态）。
     /// 产物不在仓库里时（浅克隆/清理过）自动跳过，不阻塞其他测试。
     #[test]
-    fn installs_the_shipped_theresia_package() {
-        let package = Path::new(env!("CARGO_MANIFEST_DIR"))
-            .join("../theresia-v1/release/com.theresia.mcugl-1.0.0.mcuglf");
-        if !package.exists() {
-            eprintln!("跳过：仓库里没有 {}", package.display());
-            return;
+    fn installs_the_shipped_theresia_packages() {
+        let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("..");
+        let cases = [
+            ("theresia-v1/release/com.theresia.mcugl-1.0.0.mcuglf", "Theresia V1", "1.0.0"),
+            ("theresia-v2/release/com.theresia.mcugl-2.0.0.mcuglf", "Theresia V2", "2.0.0"),
+        ];
+
+        for (relative, expected_name, expected_version) in cases {
+            let package = root.join(relative);
+            if !package.exists() {
+                eprintln!("跳过：仓库里没有 {}", package.display());
+                continue;
+            }
+
+            let data_dir = tempfile::tempdir().unwrap();
+            let installed = install(data_dir.path(), &package).expect("真实分发包应当安装成功");
+            assert_eq!(installed.identifier, "com.theresia.mcugl");
+            assert_eq!(installed.name, expected_name);
+            assert_eq!(installed.version, expected_version);
+            assert_eq!(installed.kernel_api, "^1.0.0");
+            assert_eq!(installed.entry, "index.html");
+            assert!(installed.dir.join("index.html").is_file(), "入口文件应落在安装目录");
+            assert!(installed.dir.join("assets").is_dir(), "assets 应被解压");
+
+            // 目录能被再次解析，说明清单与入口在这套安装结果上自洽
+            let resolved = resolve_dir(&installed.dir).expect("安装后的目录应能被解析为前端");
+            assert_eq!(resolved.manifest.name, expected_name);
+
+            // 同版本重复安装必须被拒绝，不能静默覆盖
+            assert!(
+                install(data_dir.path(), &package).is_err(),
+                "同 identifier+version 重复安装应被拒绝"
+            );
+
+            // 列表里能看到它，卸载后目录应被清空
+            assert_eq!(list(data_dir.path()).unwrap().len(), 1);
+            assert!(remove(data_dir.path(), "com.theresia.mcugl", Some(expected_version)).unwrap());
+            assert!(!installed.dir.exists(), "卸载后安装目录应被删除");
         }
-
-        let data_dir = tempfile::tempdir().unwrap();
-        let installed = install(data_dir.path(), &package).expect("真实分发包应当安装成功");
-        assert_eq!(installed.identifier, "com.theresia.mcugl");
-        assert_eq!(installed.name, "Theresia V1");
-        assert_eq!(installed.version, "1.0.0");
-        assert_eq!(installed.kernel_api, "^1.0.0");
-        assert_eq!(installed.entry, "index.html");
-        assert!(installed.dir.join("index.html").is_file(), "入口文件应落在安装目录");
-        assert!(installed.dir.join("assets").is_dir(), "assets 应被解压");
-
-        // 目录能被再次解析，说明清单与入口在这套安装结果上自洽
-        let resolved = resolve_dir(&installed.dir).expect("安装后的目录应能被解析为前端");
-        assert_eq!(resolved.manifest.name, "Theresia V1");
-
-        // 同版本重复安装必须被拒绝，不能静默覆盖
-        let again = install(data_dir.path(), &package);
-        assert!(again.is_err(), "同 identifier+version 重复安装应被拒绝");
-
-        // 列表里能看到它，卸载后目录应被清空
-        assert_eq!(list(data_dir.path()).unwrap().len(), 1);
-        assert!(remove(data_dir.path(), "com.theresia.mcugl", Some("1.0.0")).unwrap());
-        assert!(!installed.dir.exists(), "卸载后安装目录应被删除");
     }
 }

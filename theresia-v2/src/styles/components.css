@@ -34,15 +34,13 @@
   word-break: break-all;
 }
 
+/* 新拟态卡片：不靠描边和模糊，靠一道亮边一道暗边把表面「顶」起来 */
 .card {
   border: 0;
   border-radius: var(--radius-card);
   padding: var(--space-5);
-  box-shadow: var(--app-glass-edge), var(--shadow-card);
-  background-color: var(--app-glass);
-  background-image: var(--app-glass-grain);
-  background-size: 160px 160px;
-  backdrop-filter: var(--app-glass-blur);
+  box-shadow: var(--neu-shadow);
+  background-color: var(--neu-surface);
 }
 
 .stack {
@@ -86,9 +84,10 @@
   gap: 7px;
   height: var(--button-height);
   padding: 0 13px;
-  border: 1px solid var(--app-line);
+  border: 0;
   border-radius: var(--radius-btn);
-  background: rgb(var(--app-fill-rgb) / 78%);
+  background: var(--neu-surface-2);
+  box-shadow: var(--neu-shadow-sm);
   color: var(--app-ink-2);
   font-size: var(--text-sm);
   font-weight: 500;
@@ -103,13 +102,15 @@
 }
 
 .btn:hover {
-  border-color: var(--app-accent-soft);
-  background: var(--app-accent-wash);
+  background: var(--neu-surface-2);
   color: var(--app-accent-deep);
+  box-shadow: var(--neu-shadow);
 }
 
+/* 按下时表面「陷进去」，这是新拟态最直观的触感反馈 */
 .btn:active {
   transform: translateY(0.5px);
+  box-shadow: var(--neu-inset-sm);
 }
 
 .btn:disabled {
@@ -122,7 +123,12 @@
   background: var(--app-accent);
   color: var(--app-accent-ink);
   font-weight: 600;
-  box-shadow: 0 1px 2px rgb(var(--app-accent-rgb) / 24%), 0 6px 16px rgb(var(--app-accent-rgb) / 24%);
+  box-shadow: 0 4px 10px rgb(var(--app-accent-rgb) / 30%), 0 10px 22px rgb(var(--app-accent-rgb) / 18%);
+}
+
+.btn.primary:active {
+  box-shadow: inset 0 2px 6px rgb(0 0 0 / 22%);
+  transform: translateY(1px);
 }
 
 .btn.primary:hover {
@@ -149,14 +155,15 @@
 }
 
 .btn.ghost {
-  background: rgb(var(--app-fill-rgb) / 68%);
-  border-color: var(--app-line);
+  background: var(--neu-surface-2);
   color: var(--app-ink-2);
+  box-shadow: var(--neu-shadow-sm);
 }
 
 .btn.ghost:hover {
-  background: var(--app-accent-wash);
+  background: var(--neu-surface-2);
   color: var(--app-accent-deep);
+  box-shadow: var(--neu-shadow);
 }
 
 .btn.link {
@@ -406,9 +413,10 @@
   padding: 2px;
   border: 0;
   border-radius: 999px;
-  background: rgb(var(--app-shade-rgb) / 14%);
+  background: var(--neu-field);
+  box-shadow: var(--neu-inset-sm);
   cursor: pointer;
-  transition: background-color 140ms linear;
+  transition: background-color 140ms linear, box-shadow 140ms linear;
 }
 
 .switch-thumb {
@@ -417,7 +425,7 @@
   height: 18px;
   border-radius: 50%;
   background: var(--app-fill);
-  box-shadow: 0 1px 2px rgb(0 0 0 / 18%);
+  box-shadow: var(--neu-shadow-sm);
   transition: transform 170ms cubic-bezier(0.3, 0.7, 0.4, 1);
 }
 
@@ -427,6 +435,7 @@
 
 .switch.on {
   background: var(--app-accent);
+  box-shadow: inset 0 1px 3px rgb(0 0 0 / 22%);
 }
 
 .switch.on:hover {
@@ -458,7 +467,7 @@
 
 .input:hover,
 .select:hover {
-  border-color: var(--app-line-2);
+  background: var(--neu-field);
 }
 
 .input:focus,
@@ -603,16 +612,17 @@ textarea.input {
 /* ---------- 进度 ---------- */
 
 .progress {
-  height: 6px;
-  border-radius: 3px;
-  background: var(--app-sunken);
+  height: 8px;
+  border-radius: 4px;
+  background: var(--neu-field);
+  box-shadow: var(--neu-inset-sm);
   overflow: hidden;
 }
 
 .progress > span {
   display: block;
   height: 100%;
-  border-radius: 3px;
+  border-radius: 4px;
   background: var(--app-accent);
   transition: width 200ms linear;
 }
@@ -708,8 +718,8 @@ textarea.input {
   padding: var(--space-6);
   border: 0;
   border-radius: var(--radius-panel);
-  box-shadow: var(--app-glass-edge), var(--shadow-dialog);
-  background-color: var(--app-glass-solid);
+  box-shadow: var(--neu-shadow-lg);
+  background-color: var(--neu-surface-2);
   background-image: var(--app-glass-grain);
   background-size: 160px 160px;
   backdrop-filter: var(--app-glass-blur-strong);

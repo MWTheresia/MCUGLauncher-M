@@ -40,22 +40,25 @@ cargo check --manifest-path src-tauri/Cargo.toml
 - [UI 迁移说明](docs/UI_PORTING.md)
 - [DTO JSON Schema](schemas/launcher.schema.json)
 
-## 第三方前端（Theresia V1）
+## 第三方前端（Theresia）
 
-本仓库自带一套完整的第三方前端，位于 [`theresia-v1`](theresia-v1)：
-16 色主色 + 明暗双模式、实例轨道首页、行式设置页。它**不影响**上面的官方界面代码，
-构建成 `.mcuglf` 后在启动器里导入即可整体替换界面。
+仓库里有两套状态不同的第三方前端，都**不影响**上面的官方界面代码：
 
-**约定：后续所有 UI 开发（新页面、主题、组件）都在 `theresia-v1/` 里进行**，
-官方界面 `src/` 保持原版不动。
+| 目录 | 状态 | 内容 |
+| --- | --- | --- |
+| [`theresia-v1`](theresia-v1) | **已冻结** | 只保留成品包 `release/com.theresia.mcugl-1.0.0.mcuglf`（玻璃拟态）；源码在 git 历史 `3aace68` |
+| [`theresia-v2`](theresia-v2) | **开发中** | 完整工程：新拟态重塑、16 色主色、明暗双模式；所有后续 UI 开发都在这里 |
+
+**约定：后续所有 UI 开发（新页面、主题、组件）都在 `theresia-v2/` 里进行**，
+V1 与官方界面 `src/` 都保持不动。
 
 ```bash
-npm run theresia:install   # 首次安装子工程依赖
-npm run theresia:dev       # 浏览器预览（端口 5175，假数据）
-npm run theresia:build     # 构建 → theresia-v1/dist/
-npm run theresia:pack      # 打包 → theresia-v1/release/*.mcuglf
+npm run v2:install   # 首次安装子工程依赖
+npm run v2:dev       # 浏览器预览（端口 5176，假数据）
+npm run v2:build     # 构建 → theresia-v2/dist/
+npm run v2:pack      # 打包 → theresia-v2/release/*.mcuglf
 ```
 
-已构建好的分发包在 `theresia-v1/release/com.theresia.mcugl-1.0.0.mcuglf`，
+已构建好的分发包在 `theresia-v2/release/com.theresia.mcugl-2.0.0.mcuglf`，
 直接拖进「设置 → 开发者选项 → 前端（第三方 UI）」的虚线框即可安装并启用。
-详细说明见 [Theresia V1 说明](theresia-v1/README.md)。
+详细说明见 [Theresia V2 说明](theresia-v2/README.md)。

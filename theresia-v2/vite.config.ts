@@ -8,7 +8,7 @@ import { copyFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 /**
- * Theresia V1 前端包构建。
+ * Theresia V2 前端包构建。
  *
  * - 这是一份独立前端：自带 index.html、src 与依赖，不参与启动器本体（根目录 src）的构建。
  * - 产物 dist/ 根目录带 frontend.json，资源一律相对路径，可被 mcugl:// 协议按目录加载，
@@ -40,7 +40,8 @@ export default defineConfig(({ mode }) => {
     build: { outDir: "dist", emptyOutDir: true },
     clearScreen: false,
     server: {
-      port: demo ? 5175 : 5176,
+      // v1 的演示端口是 5175，v2 用 5176 便于两套界面并排对比
+      port: demo ? 5176 : 5177,
       strictPort: true,
       host: false,
     },
