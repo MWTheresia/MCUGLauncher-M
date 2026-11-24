@@ -43,26 +43,32 @@
   z-index: 1;
 }
 
+/*
+ * 背景：不再用照片壁纸，改成「一层主题底色 + 居中的大号启动器图标」。
+ * 图标只做底纹，透明度按明暗模式给不同值，避免浅色下发灰、深色下发亮。
+ */
 .shell-bg {
   position: absolute;
   inset: 0;
   z-index: 0;
-  background: url("../assets/wallpaper/TmpBackground.png") center / cover no-repeat;
+  display: grid;
+  place-items: center;
+  background: var(--shell-backdrop);
   pointer-events: none;
+  transition: background-color var(--dur-normal) linear;
 }
 
-/*
- * 壁纸压暗层：浅色模式是透明的，深色模式由 --app-scrim 盖一层深色。
- * 不直接改壁纸亮度，切主题时才能平滑过渡。
- */
-.shell-bg::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: var(--app-scrim);
-  transition: background-color var(--dur-normal) linear;
-  pointer-events: none;
+.shell-logo {
+  width: min(52vmin, 620px);
+  height: auto;
+  opacity: var(--shell-logo-opacity);
+  filter: var(--shell-logo-filter);
+  user-select: none;
+  -webkit-user-drag: none;
+  transition: opacity var(--dur-normal) linear;
 }
+
+
 
 .page-host,
 .nav-dock {

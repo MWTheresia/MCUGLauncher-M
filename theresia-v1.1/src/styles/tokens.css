@@ -54,8 +54,14 @@
   --app-hover-fill: rgb(20 30 42 / 6%);
   --app-press-fill: rgb(20 30 42 / 12%);
   --app-sunken: #edf2f8;
-  /* 壁纸压暗层：浅色模式下也盖一层浅色雾，让新拟态的软表面站得住 */
   --app-scrim: rgb(233 239 246 / 22%);
+
+  /* ---------- 整窗背景：一层主题底色 + 居中的启动器图标底纹 ---------- */
+  --shell-backdrop:
+    radial-gradient(120% 80% at 50% 0%, #ffffff 0%, #f3f7fb 42%, #e6edf6 100%);
+  /* 浅色下保留logo本身的配色，但降饱和 + 提亮，让它退成很淡的一层底纹 */
+  --shell-logo-opacity: 0.13;
+  --shell-logo-filter: saturate(0.55) brightness(1.1);
 
   /* ---------- 新拟态（Neumorphism） ----------
    * 软表面的核心是「同一底色 + 一明一暗两道投影」：左上受光、右下背光。
@@ -216,8 +222,13 @@
   --neu-inset: inset 0 1px 3px rgb(0 0 0 / 45%);
   --neu-inset-sm: inset 0 1px 2px rgb(0 0 0 / 40%);
 
-  /* 壁纸压暗：深色模式下画面不能比界面还亮 */
+  /* 深色下图标本身是深色，压暗改为提亮一点、并把透明度调高 */
   --app-scrim: rgb(6 10 16 / 62%);
+  --shell-backdrop:
+    radial-gradient(120% 80% at 50% 0%, #16202c 0%, #0d141d 46%, #070b11 100%);
+  /* 深色下的图标去掉彩度、压成灰白幽灵，避免蓝绿logo在暗底上发艳 */
+  --shell-logo-opacity: 0.11;
+  --shell-logo-filter: grayscale(1) brightness(1.45);
 
   --orb-idle: #b97a7e;
   --orb-live: #6ea98c;
