@@ -34,9 +34,9 @@
   word-break: break-all;
 }
 
-/* 新拟态卡片：不靠描边和模糊，靠一道亮边一道暗边把表面「顶」起来 */
+/* 卡片：极轻的投影 + 一道发丝描边，边界清楚但不发光 */
 .card {
-  border: 0;
+  border: 1px solid rgb(var(--app-shade-rgb) / 6%);
   border-radius: var(--radius-card);
   padding: var(--space-5);
   box-shadow: var(--neu-shadow);

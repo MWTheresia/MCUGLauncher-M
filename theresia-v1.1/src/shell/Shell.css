@@ -121,9 +121,9 @@
   bottom: var(--nav-inset);
   left: 0;
   z-index: 1;
-  border-radius: 999px;
+  border-radius: 10px;
   background: var(--nav-chip-fill);
-  box-shadow: var(--neu-shadow-sm);
+  box-shadow: none;
   pointer-events: none;
   /* 平时只过渡 opacity：位置变化由 .slide 负责 */
   transition: opacity 120ms linear;
@@ -140,9 +140,9 @@
 .nav-pill .btn.topnav {
   position: relative;
   z-index: 2;
-  height: 40px;
-  padding: 0 17px;
-  border-radius: 999px;
+  height: 38px;
+  padding: 0 16px;
+  border-radius: 9px;
 }
 
 .nav-pill .btn.topnav.active {
@@ -160,7 +160,7 @@
   position: absolute;
   inset: var(--nav-inset);
   z-index: -1;
-  border-radius: 999px;
+  border-radius: 9px;
   background: transparent;
   transition: background-color 120ms linear;
   pointer-events: none;
@@ -185,11 +185,13 @@
 }
 
 /*
- * 新拟态胶囊：不再靠透明度和模糊，而是一明一暗两道投影把它从壁纸上「顶」起来。
+ * 导航条：从「悬浮胶囊」收成一整条贴合内容的工具条——
+ * 圆角只留 14px，投影压到最轻，不要再有胶囊那种鼓起来的观感。
  */
 .nav-scene-bar {
-  border-radius: 999px;
-  box-shadow: var(--neu-shadow);
+  border: 1px solid rgb(var(--app-shade-rgb) / 6%);
+  border-radius: 14px;
+  box-shadow: var(--neu-shadow-sm);
   background-color: var(--nav-bar-fill);
 }
 
