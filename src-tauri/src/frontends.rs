@@ -1006,7 +1006,7 @@ mod tests {
     #[test]
     fn installs_the_shipped_theresia_package() {
         let package = Path::new(env!("CARGO_MANIFEST_DIR"))
-            .join("../frontends/theresia-v1/release/com.theresia.mcugl-1.0.0.mcuglf");
+            .join("../theresia-v1/release/com.theresia.mcugl-1.0.0.mcuglf");
         if !package.exists() {
             eprintln!("跳过：仓库里没有 {}", package.display());
             return;

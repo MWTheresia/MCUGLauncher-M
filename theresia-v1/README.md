@@ -7,9 +7,21 @@ MCUG Launcher 的第三方前端：整体替换启动器界面，不改动官方
 - **版本**：`1.0.0`
 - **内核契约**：`mcugl.kernel/v1`（`^1.0.0`）
 - **产物**：`release/com.theresia.mcugl-1.0.0.mcuglf`
-- **sha256**：`1b007d9a64f6a64bb2e433ea75c7c1526321be604c92b29f4c1a29b066cb8d9a`
+- **sha256**：`edd16e29a70fa0fb5915b6fce5d62786b20ef6c81112b46ab2b780811e4b65bd`
 
 ---
+
+## 0. 目录边界
+
+```
+MCUGLauncher-M/
+├─ src/            官方内置界面（原版，随 tauri build 打包进二进制）
+├─ index.html      ↑ 官方入口
+├─ theresia-v1/    ← 本工程：所有 UI 开发都在这里
+└─ src-tauri/      桌面端内核（Rust）
+```
+
+两套界面**没有任何共享文件**：各自带 `src/`、依赖和构建配置。改 `theresia-v1/` 不会影响官方界面，反过来也一样。
 
 ## 1. 它是什么
 
@@ -22,7 +34,7 @@ MCUG Launcher 的第三方前端：整体替换启动器界面，不改动官方
 ## 2. 目录结构
 
 ```
-frontends/theresia-v1/
+theresia-v1/
 ├─ src/                  界面源码（独立的 React + TS 工程）
 │  ├─ theme/             16 色主色调 + 明暗模式的实现
 │  ├─ styles/            设计令牌、基础样式、通用组件
@@ -43,13 +55,15 @@ frontends/theresia-v1/
 ## 3. 构建与预览
 
 ```powershell
-cd frontends/theresia-v1
+cd theresia-v1
 
 npm install          # 首次
 npm run dev:demo     # 浏览器预览，端口 5175，用内存假数据
 npm run build        # 构建 → dist/（根目录自带 frontend.json）
-npm run pack         # 打包 → ../../dist-frontends/<identifier>-<version>.mcuglf
+npm run pack         # 打包 → release/<identifier>-<version>.mcuglf
 ```
+
+> `release/` 里的文件名带版本号，升版本时同步改 `package.json` 的 `pack` 参数与 `frontend.json` 的 `version`。
 
 仓库根也有转发命令：`npm run theresia:install` / `theresia:dev` / `theresia:build` / `theresia:pack`。
 

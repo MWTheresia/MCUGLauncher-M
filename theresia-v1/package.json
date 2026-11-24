@@ -9,7 +9,7 @@
     "dev:demo": "vite --mode demo",
     "build": "tsc && vite build",
     "typecheck": "tsc --noEmit",
-    "pack": "node ../../scripts/pack-frontend.mjs dist"
+    "pack": "node ../scripts/pack-frontend.mjs dist --out release/com.theresia.mcugl-1.0.0.mcuglf"
   },
   "dependencies": {
     "@chakra-ui/react": "^3.38.0",
