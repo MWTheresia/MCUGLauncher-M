@@ -1001,6 +1001,25 @@ mod tests {
         assert!(error.message().contains("图标"), "{}", error.message());
     }
 
+    /// 手动端到端：`MCUGL_E2E_INSTALL=<数据目录>` 时把 V1.1 包真的装进去，
+    /// 用来验证「官方版本 + 导入这个包 = 当前界面」这条路径。默认 ignore。
+    #[test]
+    #[ignore]
+    fn e2e_install_into_data_dir() {
+        let Ok(dir) = std::env::var("MCUGL_E2E_INSTALL") else {
+            return;
+        };
+        let package = Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("../theresia-v1.1/release/com.theresia.mcugl-1.1.0.mcuglf");
+        let installed = install(Path::new(&dir), &package).expect("真实分发包应当安装成功");
+        println!(
+            "installed {} {} -> {}",
+            installed.name,
+            installed.version,
+            installed.dir.display()
+        );
+    }
+
     /// 端到端：仓库里随包发布的真实 `.mcuglf` 必须能通过同一套校验装进来。
     /// 目前有两份：theresia-v1（1.0.0，玻璃拟态）与 theresia-v1.1（2.0.0，新拟态）。
     /// 产物不在仓库里时（浅克隆/清理过）自动跳过，不阻塞其他测试。
