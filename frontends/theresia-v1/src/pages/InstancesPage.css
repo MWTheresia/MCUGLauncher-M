@@ -1,0 +1,98 @@
+.instance-tab-body {
+  flex: 1;
+  min-height: 0;
+  margin-top: 10px;
+  padding-right: 20px;
+}
+
+.instance-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  padding: 16px;
+}
+
+.instance-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.mod-list {
+  display: flex;
+  flex-direction: column;
+  margin-top: 8px;
+}
+
+.mod-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--app-hover-fill);
+}
+
+.mod-row:last-child {
+  border-bottom: 0;
+}
+
+/*
+ * 实例管理器嵌入模式：标签做成胶囊（白磨砂 + 滑动选中底）。
+ * 滑动用 transform/width 过渡；内容淡入淡出挂在 .instance-tab-body 上。
+ */
+.tab-pill {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  align-self: flex-start;
+  padding: 3px;
+  border-radius: 999px;
+  background-color: var(--app-glass-strong);
+  background-image: var(--app-glass-grain);
+  background-size: 160px 160px;
+  backdrop-filter: var(--app-glass-blur);
+  box-shadow: var(--shadow-card);
+}
+
+.tab-indicator {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  left: 0;
+  border-radius: 999px;
+  background: rgb(var(--app-shade-rgb) / 12%);
+  transition:
+    transform 200ms cubic-bezier(0.22, 0.88, 0.3, 1),
+    width 200ms cubic-bezier(0.22, 0.88, 0.3, 1);
+}
+
+.tab-pill-item {
+  position: relative;
+  z-index: 1;
+  height: 30px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--app-ink-2);
+  font-size: 12px;
+  cursor: pointer;
+  transition: color 110ms linear;
+}
+
+.tab-pill-item.active {
+  color: var(--app-ink);
+  font-weight: 600;
+}
+
+/* 标签内容的淡入淡出（useFadeSwap 驱动） */
+.instance-tab-body {
+  transition: opacity 130ms linear;
+}
+
+.instance-tab-body.is-fading {
+  opacity: 0;
+}

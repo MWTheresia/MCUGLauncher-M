@@ -1,0 +1,209 @@
+/*
+ * 设计令牌（设计基底 v3：主题化）
+ * ---------------------------------------------
+ * 所有颜色、字号、间距、圆角、阴影、动效都从这里取。
+ * 页面 CSS 只允许引用变量，不写死十六进制色值与像素级字号。
+ *
+ * 两套主题：默认浅色；<html data-theme="dark"> 切到深色。
+ * 主色由外观设置里的 16 色板在运行时写入 --app-accent* 一组变量（见 src/theme/ThemeProvider.tsx）。
+ *
+ * 三个「可反转」的中间变量，把散落在页面里的半透明白/黑收拢成主题感知的：
+ *   --app-fill-rgb  表面填充（浅色=白，深色=深灰）
+ *   --app-shade-rgb 叠加阴影/描边（浅色=深，深色=白）
+ *   --app-fill      实体填充（按钮、胶囊、开关滑块）
+ */
+
+:root {
+  color-scheme: light;
+
+  /* ---------- 底色与文字 ---------- */
+
+  --app-bg: #eef3f7;
+  --app-side: #f6f9fb;
+  --app-card: #ffffff;
+
+  --app-ink: #141c24;
+  --app-ink-2: #4a555f;
+  --app-ink-3: #6b7681;
+  --app-ink-4: #97a1ab;
+
+  /* ---------- 分隔线与控件边框 ---------- */
+
+  --app-line: #e3e9ef;
+  --app-line-2: #ccd5de;
+
+  /* ---------- 玻璃材质 ----------
+   * 三级透明层 + 噪点，全部无描边；靠 blur 与投影区分层级。
+   * 卡片 < 面板 < 浮层，透明度逐级升高。 */
+
+  --app-glass: rgb(255 255 255 / 62%);
+  --app-glass-strong: rgb(255 255 255 / 80%);
+  --app-glass-solid: rgb(255 255 255 / 92%);
+  --app-glass-blur: blur(24px) saturate(150%);
+  --app-glass-blur-strong: blur(34px) saturate(160%);
+  --app-glass-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23g)' opacity='0.14'/%3E%3C/svg%3E");
+
+  /* 玻璃上沿高光：一块 1px 的白，让边缘看起来是「有厚度的」，不是描边 */
+  --app-glass-edge: inset 0 1px 0 rgb(255 255 255 / 62%);
+
+  /* ---------- 主题反转的中间层 ---------- */
+
+  --app-fill-rgb: 255 255 255;
+  --app-shade-rgb: 20 30 42;
+  --app-fill: #ffffff;
+  --app-hover-fill: rgb(20 30 42 / 6%);
+  --app-press-fill: rgb(20 30 42 / 12%);
+  --app-sunken: #edf2f8;
+  --app-scrim: rgb(8 14 22 / 0%);
+
+  /* 顶部导航胶囊：bar 是胶囊底，chip 是选中项的滑块 */
+  --nav-bar-fill: rgb(250 252 255 / 93%);
+  --nav-chip-fill: #ffffff;
+
+  /* ---------- 悬停提示 ---------- */
+
+  --tip-bg: rgb(16 22 29 / 94%);
+  --tip-ink: #fff;
+
+  /* ---------- 主色（运行时由主题覆写） ---------- */
+
+  --app-accent: #3b82f6;
+  --app-accent-hover: #2f74e6;
+  --app-accent-dark: #2563eb;
+  --app-accent-deep: #1d4ed8;
+  --app-accent-soft: #bfdbfe;
+  --app-accent-tint: #dbeafe;
+  --app-accent-wash: #eff6ff;
+  --app-accent-glow: rgb(59 130 246 / 30%);
+  --app-accent-ink: #ffffff;
+
+  /* ---------- 状态色 ---------- */
+
+  --app-amber: #8f5a0e;
+  --app-amber-bg: #fbf3e2;
+  --app-red: #bf443b;
+  --app-red-bg: #fbedeb;
+  --app-green: #1f7a52;
+  --app-green-bg: #e6f6ee;
+
+  /* ---------- 深色块（Toast / 反色区域） ---------- */
+
+  --app-sidebar: #16202b;
+  --app-sidebar-text: #e8eef5;
+
+  /* ---------- 字体 ---------- */
+
+  --font-ui: "Microsoft YaHei UI", "Microsoft YaHei", "Segoe UI", system-ui, sans-serif;
+  --font-quote: Georgia, "Times New Roman", serif;
+
+  /* 字号阶梯：正文 13，小字 12，弱标注 11 */
+  --text-xs: 11px;
+  --text-sm: 12px;
+  --text-md: 13px;
+  --text-lg: 15px;
+  --text-xl: 18px;
+  --text-2xl: 22px;
+  --text-3xl: 28px;
+
+  --leading-tight: 1.25;
+  --leading-normal: 1.55;
+
+  /* ---------- 间距（4 的倍数） ---------- */
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+
+  /* ---------- 圆角 ---------- */
+
+  --radius-card: 14px;
+  --radius-launch: 12px;
+  --radius-btn: 9px;
+  --radius-input: 9px;
+  --radius-pill: 999px;
+  --radius-panel: 20px;
+  --radius-xl: 26px;
+
+  /* ---------- 阴影 ---------- */
+
+  --shadow-card: 0 1px 2px rgb(16 30 45 / 4%), 0 10px 28px rgb(16 30 45 / 6%);
+  --shadow-nav: 0 10px 30px rgb(16 30 45 / 14%), 0 2px 6px rgb(16 30 45 / 6%);
+  --shadow-dialog: 0 24px 60px rgb(12 22 36 / 24%), 0 4px 12px rgb(12 22 36 / 8%);
+  --shadow-avatar: 0 3px 10px rgb(14 43 63 / 13%);
+
+  /* ---------- 动效 ---------- */
+
+  --ease-out: cubic-bezier(0.22, 0.88, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.2, 0.4, 1);
+  --dur-fast: 120ms;
+  --dur-normal: 200ms;
+  --dur-slow: 280ms;
+
+  /* ---------- 尺寸 ---------- */
+
+  --titlebar-height: 52px;
+  --control-height: 36px;
+  --button-height: 34px;
+  --dock-inset: 20px;
+}
+
+/* ------------------------------------------------------------------
+ * 深色模式：底色、文字、玻璃、阴影整体反转。
+ * 页面里只用到上面这些变量的地方会自动跟着变；仍然写死颜色的地方
+ * 已在各自 CSS 里换成 var(--app-fill) / rgb(var(--app-shade-rgb) / x%)。
+ * ------------------------------------------------------------------ */
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --app-bg: #0c1117;
+  --app-side: #121a23;
+  --app-card: #18222d;
+
+  --app-ink: #e9eff7;
+  --app-ink-2: #aebbcb;
+  --app-ink-3: #8695a7;
+  --app-ink-4: #64748b;
+
+  --app-line: #232e3b;
+  --app-line-2: #334154;
+
+  --app-glass: rgb(26 35 46 / 62%);
+  --app-glass-strong: rgb(30 40 52 / 80%);
+  --app-glass-solid: rgb(28 38 49 / 94%);
+  --app-glass-edge: inset 0 1px 0 rgb(255 255 255 / 8%);
+
+  --app-fill-rgb: 34 45 58;
+  --app-shade-rgb: 255 255 255;
+  --app-fill: #1d2733;
+  --app-hover-fill: rgb(255 255 255 / 8%);
+  --app-press-fill: rgb(255 255 255 / 14%);
+  --app-sunken: rgb(6 10 16 / 45%);
+
+  /* 壁纸压暗：深色模式下画面不能比界面还亮 */
+  --app-scrim: rgb(6 10 16 / 62%);
+
+  --tip-bg: rgb(226 236 248 / 96%);
+  --tip-ink: #10161f;
+
+  --nav-bar-fill: rgb(28 38 49 / 92%);
+  --nav-chip-fill: rgb(255 255 255 / 13%);
+
+  --app-amber: #f0b429;
+  --app-amber-bg: rgb(240 180 41 / 14%);
+  --app-red: #ff8a80;
+  --app-red-bg: rgb(255 138 128 / 14%);
+  --app-green: #4ade80;
+  --app-green-bg: rgb(74 222 128 / 14%);
+
+  --app-sidebar: #1d2733;
+  --app-sidebar-text: #e8eef5;
+
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 30%), 0 10px 28px rgb(0 0 0 / 34%);
+  --shadow-nav: 0 12px 34px rgb(0 0 0 / 46%), 0 2px 6px rgb(0 0 0 / 30%);
+  --shadow-dialog: 0 24px 60px rgb(0 0 0 / 58%), 0 4px 12px rgb(0 0 0 / 36%);
+}

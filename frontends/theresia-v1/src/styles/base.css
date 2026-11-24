@@ -1,0 +1,102 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: var(--font-ui);
+  font-size: var(--text-md);
+  line-height: var(--leading-normal);
+  color: var(--app-ink);
+  background: var(--app-bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  /* 桌面应用观感：默认不允许框选文字，输入类控件单独放开 */
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+/* 输入类控件与显式标记的区域仍可框选/复制 */
+input,
+textarea,
+[contenteditable="true"],
+.selectable {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+img,
+svg {
+  display: block;
+}
+
+/* 图片不允许被拖拽出来 */
+img {
+  -webkit-user-drag: none;
+}
+
+/* 细线滚动条：滑块悬停加深，不做背景轨道 */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(120 140 160 / 45%) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  border: 2px solid transparent;
+  border-radius: 4px;
+  background: rgb(120 140 160 / 40%);
+  background-clip: content-box;
+  transition: background-color var(--dur-fast) linear;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(90 110 130 / 55%);
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: rgb(70 90 110 / 65%);
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+:focus-visible {
+  outline: 2px solid rgb(59 130 246 / 55%);
+  outline-offset: 2px;
+}

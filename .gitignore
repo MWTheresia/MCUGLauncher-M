@@ -48,3 +48,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# 第三方前端工程的构建产物（源码与 release/ 里的 .mcuglf 要提交）
+frontends/*/node_modules
+frontends/*/dist
+# 打包脚本的默认输出目录（仓库里预置的示例包是已跟踪文件，不受影响）
+dist-frontends
+

@@ -1,0 +1,29 @@
+{
+  "name": "theresia-v1",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Theresia V1：MCUG Launcher 的第三方前端（16 色主题 / 明暗双模式 / 实例轨道首页）",
+  "scripts": {
+    "dev": "vite",
+    "dev:demo": "vite --mode demo",
+    "build": "tsc && vite build",
+    "typecheck": "tsc --noEmit",
+    "pack": "node ../../scripts/pack-frontend.mjs dist"
+  },
+  "dependencies": {
+    "@chakra-ui/react": "^3.38.0",
+    "@emotion/react": "^11.14.0",
+    "@tauri-apps/api": "^2",
+    "@tauri-apps/plugin-opener": "^2",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "@vitejs/plugin-react": "^6.0.2",
+    "typescript": "~6.0.3",
+    "vite": "^8.0.16"
+  }
+}

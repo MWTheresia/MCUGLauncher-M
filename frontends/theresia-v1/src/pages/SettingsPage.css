@@ -1,0 +1,473 @@
+.settings-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 11px;
+  /* 底部留出常驻保存条的高度，滚到底时最后一排不会被它压住 */
+  padding-bottom: 64px;
+}
+
+/* 一个分区里拆成多张卡片时使用，保持和原单卡片相近的视觉节奏。 */
+.settings-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 设置卡片的内部节奏：标题、说明、表单之间统一 10px。 */
+.settings-card {
+  gap: 10px;
+}
+
+/* 左侧标题 + 说明，右侧控件。 */
+.setting-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* 拖放安装区：整块虚线框，拖进来高亮成主色 */
+.frontend-drop {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 16px 18px;
+  border: 1.5px dashed var(--app-line-2);
+  border-radius: var(--radius-card);
+  background: rgb(var(--app-shade-rgb) / 3%);
+  transition:
+    border-color var(--dur-fast) linear,
+    background-color var(--dur-fast) linear,
+    box-shadow var(--dur-fast) linear,
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.frontend-drop.is-dragging {
+  border-color: var(--app-accent);
+  background: var(--app-accent-wash);
+  box-shadow: 0 0 0 4px rgb(var(--app-accent-rgb) / 12%);
+  transform: scale(1.004);
+}
+
+.frontend-drop-icon {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  color: var(--app-accent);
+}
+
+.frontend-drop-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.frontend-drop-title {
+  font-size: var(--text-md);
+  font-weight: 600;
+  color: var(--app-ink);
+}
+
+/* 前端条目的操作区：启用/停用与卸载分开，中间一条细分隔线 */
+.frontend-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+}
+
+.frontend-divider {
+  width: 1px;
+  height: 18px;
+  background: var(--app-line);
+}
+
+/* 卸载是不可逆操作，用警示色和「停用」区分开 */
+.btn.ghost.danger {
+  color: var(--app-red);
+}
+
+.btn.ghost.danger:hover {
+  border-color: transparent;
+  background: var(--app-red-bg);
+  color: var(--app-red);
+}
+
+/* 前端包一行：图标 + 文案，图标不参与压缩。 */
+.frontend-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.frontend-icon {
+  width: 34px;
+  height: 34px;
+  flex: none;
+  border-radius: 9px;
+  object-fit: cover;
+  background: var(--app-line-2);
+}
+
+/* 没有图标时回退到内置方块图标，用虚线框提示“这是占位”。 */
+.frontend-icon.fallback {
+  display: grid;
+  place-items: center;
+  color: var(--app-ink-3);
+  border: 1px dashed var(--app-line-2);
+}
+
+.frontend-icon-glyph {
+  width: 18px;
+  height: 18px;
+}
+
+/* 输入框/下拉框与按钮同一行；输入框吃掉剩余宽度。 */
+.settings-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.settings-actions > .input,
+.settings-actions > .select {
+  flex: 1 1 0;
+  width: auto;
+  min-width: 0;
+}
+
+.settings-self-start {
+  align-self: flex-start;
+}
+
+.settings-list {
+  gap: 8px;
+}
+
+.settings-list-group {
+  gap: 4px;
+}
+
+.theme-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px;
+  border: 1px solid var(--app-line);
+  border-radius: 8px;
+  background: var(--app-bg);
+}
+
+.theme-name {
+  font-weight: 700;
+}
+
+/* 两段式选择器：主页按钮对齐 */
+.segmented {
+  display: inline-flex;
+  flex: none;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 10px;
+  background: rgb(var(--app-shade-rgb) / 6%);
+}
+
+.segmented-option {
+  min-width: 76px;
+  height: 26px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--app-ink-3);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 120ms linear,
+    color 120ms linear,
+    box-shadow 120ms linear;
+}
+
+.segmented-option:hover {
+  color: var(--app-ink);
+}
+
+.segmented-option.is-selected {
+  background: var(--app-fill);
+  color: var(--app-accent-deep);
+  box-shadow: 0 1px 3px rgb(var(--app-shade-rgb) / 16%);
+}
+
+.log-box {
+  min-height: 260px;
+  max-height: 420px;
+  font-family: Consolas, 'Microsoft YaHei UI', monospace;
+  white-space: pre;
+  resize: vertical;
+}
+
+.about-version {
+  font-weight: 700;
+}
+
+/* 社区管理：公告与推荐列表 */
+.community-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.community-title {
+  font-weight: 600;
+  word-break: break-word;
+}
+
+.community-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--app-line);
+}
+
+.community-row:last-of-type {
+  border-bottom: 0;
+}
+
+/* ---------- 设置行：左标签 + 右控件（防呆版） ---------- */
+
+/*
+ * 一行一个设置项：左侧固定 132px 标签列，右侧控件自适应。
+ * 窄窗口下自动折成上下两行，标签不再和控件抢宽度。
+ */
+.setting-field {
+  display: grid;
+  grid-template-columns: 132px minmax(0, 1fr);
+  gap: 8px 14px;
+  align-items: center;
+  padding: 11px 0;
+}
+
+.setting-field + .setting-field {
+  border-top: 1px solid rgb(var(--app-shade-rgb) / 6%);
+}
+
+.setting-field-label {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--app-ink-2);
+  line-height: 1.4;
+}
+
+.setting-field-body {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  min-width: 0;
+}
+
+/* 输入框 + 按钮那一组要吃掉剩余宽度，否则输入框会被挤成一小截 */
+.setting-field-body > .settings-actions {
+  flex: 1 1 260px;
+  min-width: 0;
+}
+
+/* 单行短文本（玩家名）不铺满整行 */
+.input.setting-name {
+  flex: none;
+  width: 260px;
+  max-width: 100%;
+}
+
+/* 校验失败时的行内说明：贴着控件下方，跟着行一起换行 */
+.setting-field-error {
+  flex-basis: 100%;
+  color: var(--app-red);
+  font-size: var(--text-xs);
+  line-height: 1.5;
+}
+
+.setting-field-note {
+  flex-basis: 100%;
+  color: var(--app-ink-3);
+  font-size: var(--text-xs);
+  line-height: 1.5;
+}
+
+/* 数字输入框不跟着拉伸，旁边留出单位位置 */
+.input.setting-num {
+  flex: none;
+  width: 112px;
+}
+
+.setting-unit {
+  flex: none;
+  color: var(--app-ink-3);
+  font-size: var(--text-xs);
+}
+
+/* 常用值快捷chip：点一下就填好，省得手输错 */
+.setting-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.setting-chip {
+  height: 26px;
+  padding: 0 11px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: rgb(var(--app-fill-rgb) / 68%);
+  color: var(--app-ink-2);
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition: background-color var(--dur-fast) linear, color var(--dur-fast) linear;
+}
+
+.setting-chip:hover {
+  background: var(--app-accent-wash);
+  color: var(--app-accent-deep);
+}
+
+.setting-chip.is-active {
+  background: var(--app-accent-tint);
+  color: var(--app-accent-deep);
+  font-weight: 600;
+}
+
+/* 自动分配打开时，常用值 chip 一起失效，避免误点后没有反应 */
+.setting-chip:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.setting-chip:disabled:hover {
+  background: rgb(var(--app-fill-rgb) / 68%);
+  color: var(--app-ink-2);
+}
+
+/* ---------- 卡片底部的保存条 ---------- */
+
+/*
+ * 保存条：贴在滚动容器底部常驻，滚到哪都能看到「有没有改、能不能存」，
+ * 避免改完一屏却找不到保存按钮。左右用负边距顶到卡片边缘，视觉上是一条独立工具条。
+ */
+.settings-footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 6px -20px -20px;
+  padding: 12px 20px;
+  border-top: 1px solid rgb(var(--app-shade-rgb) / 8%);
+  border-radius: 0 0 var(--radius-card) var(--radius-card);
+  background: linear-gradient(to bottom, rgb(var(--app-fill-rgb) / 72%), rgb(var(--app-fill-rgb) / 94%));
+  backdrop-filter: blur(14px) saturate(140%);
+}
+
+.settings-footer-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-xs);
+  color: var(--app-ink-3);
+}
+
+.settings-footer-note.is-dirty {
+  color: var(--app-amber);
+  font-weight: 600;
+}
+
+.settings-footer-note.is-error {
+  color: var(--app-red);
+  font-weight: 600;
+}
+
+/* 未保存小圆点 */
+.settings-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+@media (max-width: 980px) {
+  .setting-field {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+}
+/* ---------- 主题：16 色板 + 明暗切换 ---------- */
+
+.theme-swatches {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 4px;
+  width: 100%;
+}
+
+.theme-swatch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 2px 6px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  cursor: pointer;
+  transition: background-color var(--dur-fast) linear;
+}
+
+.theme-swatch:hover {
+  background: var(--app-hover-fill);
+}
+
+.theme-swatch-dot {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--swatch-color);
+  box-shadow: inset 0 0 0 1px rgb(var(--app-shade-rgb) / 12%);
+  transition: box-shadow var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+}
+
+.theme-swatch:hover .theme-swatch-dot {
+  transform: scale(1.08);
+}
+
+.theme-swatch.is-selected .theme-swatch-dot {
+  box-shadow:
+    0 0 0 2px var(--app-card),
+    0 0 0 4px var(--swatch-color);
+}
+
+.theme-swatch-label {
+  font-size: 10.5px;
+  color: var(--app-ink-3);
+  white-space: nowrap;
+}
+
+.theme-swatch.is-selected .theme-swatch-label {
+  color: var(--app-ink);
+  font-weight: 600;
+}
+
+@media (max-width: 1080px) {
+  .theme-swatches {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}

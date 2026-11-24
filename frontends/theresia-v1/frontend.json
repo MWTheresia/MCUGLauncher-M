@@ -1,0 +1,10 @@
+{
+  "identifier": "com.theresia.mcugl",
+  "name": "Theresia V1",
+  "version": "1.0.0",
+  "kernelApi": "^1.0.0",
+  "entry": "index.html",
+  "author": "Theresia",
+  "description": "MCUG Launcher 整套重设计界面：16 色主题、明暗双模式、实例轨道与启动坞。",
+  "homepage": "https://github.com/MWTheresia/MCUGLauncher-M"
+}

@@ -39,3 +39,20 @@ cargo check --manifest-path src-tauri/Cargo.toml
 - [V2 状态与迁移方案](docs/BACKEND_V2.md)
 - [UI 迁移说明](docs/UI_PORTING.md)
 - [DTO JSON Schema](schemas/launcher.schema.json)
+
+## 第三方前端（Theresia V1）
+
+本仓库自带一套完整的第三方前端，位于 [`frontends/theresia-v1`](frontends/theresia-v1)：
+16 色主色 + 明暗双模式、实例轨道首页、行式设置页。它**不影响**上面的官方界面代码，
+构建成 `.mcuglf` 后在启动器里导入即可整体替换界面。
+
+```bash
+npm run theresia:install   # 首次安装子工程依赖
+npm run theresia:dev       # 浏览器预览（端口 5175，假数据）
+npm run theresia:build     # 构建 → frontends/theresia-v1/dist/
+npm run theresia:pack      # 打包成 .mcuglf
+```
+
+已构建好的分发包在 `frontends/theresia-v1/release/com.theresia.mcugl-1.0.0.mcuglf`，
+直接拖进「设置 → 开发者选项 → 前端（第三方 UI）」的虚线框即可安装并启用。
+详细说明见 [前端工程目录](frontends/README.md) 与 [Theresia V1 说明](frontends/theresia-v1/README.md)。

@@ -1,0 +1,102 @@
+/* 左侧分区导航：分类圆角块 + 图标条目（手机设置页的那种分组列表） */
+
+.section-nav {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+.section-title {
+  margin: 0 6px 2px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--app-ink);
+}
+
+/* 分类块：整体一块浅色圆角矩形，不透明度很低，但能看出边界 */
+.section-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 4px;
+  border-radius: 12px;
+  background: rgb(var(--app-fill-rgb) / 22%);
+}
+
+.section-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 9px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--app-ink-2);
+  font-size: 12px;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 110ms linear, color 110ms linear;
+}
+
+/* 悬停统一为灰，不随分类变化 */
+.section-item:hover {
+  background: rgb(var(--app-shade-rgb) / 6%);
+  color: var(--app-ink);
+}
+
+.section-item.selected {
+  background: rgb(var(--app-shade-rgb) / 12%);
+  color: var(--app-ink);
+  font-weight: 600;
+}
+
+.section-item.selected:hover {
+  background: rgb(var(--app-shade-rgb) / 14%);
+}
+
+.section-icon {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  opacity: 0.72;
+  transition: opacity var(--dur-fast) linear;
+}
+
+.section-item:hover .section-icon,
+.section-item.selected .section-icon {
+  opacity: 1;
+}
+
+.section-label {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 跳转条目：右侧的箭头只做提示，点击整行仍然跳转 */
+.section-jump {
+  flex: none;
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--app-ink-3);
+  opacity: 0.72;
+}
+
+.section-jump-icon {
+  display: block;
+  width: 14px;
+  height: 14px;
+}
+
+.section-item-jump:hover .section-jump {
+  color: var(--app-ink);
+  opacity: 1;
+}
