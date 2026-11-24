@@ -208,18 +208,29 @@ export default function TopStatus() {
   /** 进度到 100 时进入完成态：翻正、变绿、停 1.2 秒再淡出。 */
   const [finishing, setFinishing] = useState(false);
   const previousPercent = useRef(0);
+
+  // 只在「跨过 100」的那一帧置位；计时器单独放，避免进度回落到 0 时把计时清掉
   useEffect(() => {
-    if (previousPercent.current < 100 && percent >= 100) {
-      setFinishing(true);
-      previousPercent.current = percent;
-      const timer = window.setTimeout(() => setFinishing(false), 1200);
-      return () => window.clearTimeout(timer);
-    }
+    if (percent >= 100 && previousPercent.current < 100) setFinishing(true);
     previousPercent.current = percent;
-    return undefined;
   }, [percent]);
 
-  const downloadsVisible = forceDownloadAnim || showTasks || finishing;
+  useEffect(() => {
+    if (!finishing) return;
+    const timer = window.setTimeout(() => setFinishing(false), 1200);
+    return () => window.clearTimeout(timer);
+  }, [finishing]);
+
+  // 关掉强制动画、且没有真实任务时立刻回到初始态，不要卡在「已翻正」的样子
+  useEffect(() => {
+    if (forceDownloadAnim || showTasks) return;
+    setFinishing(false);
+    previousPercent.current = 0;
+  }, [forceDownloadAnim, showTasks]);
+
+  /** 只有「完整填满」才算完成态：进度回落后要马上翻回倒三角 */
+  const done = finishing && percent >= 100;
+  const downloadsVisible = forceDownloadAnim || showTasks || done;
 
   return (
     <>
@@ -289,7 +300,7 @@ export default function TopStatus() {
           <button
             type="button"
             className={`orb-button orb-download${open === "tasks" ? " is-open" : ""}${
-              finishing ? " is-done" : ""
+              done ? " is-done" : ""
             }`}
             aria-label={`下载任务，进度 ${percent}%`}
             aria-haspopup="dialog"
