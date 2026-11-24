@@ -8,7 +8,7 @@ import { copyFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 /**
- * Theresia V2 前端包构建。
+ * Theresia V1.1 前端包构建。
  *
  * - 这是一份独立前端：自带 index.html、src 与依赖，不参与启动器本体（根目录 src）的构建。
  * - 产物 dist/ 根目录带 frontend.json，资源一律相对路径，可被 mcugl:// 协议按目录加载，

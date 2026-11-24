@@ -29,5 +29,5 @@ git show 3aace68 --stat
 git checkout 3aace68 -- theresia-v1
 ```
 
-后续 UI 开发都在 [`theresia-v2`](../theresia-v2) 上进行——V2 是基于 V1 的新拟态重塑，
-文件结构与 V1 完全相同，改 V2 不会影响这个已发布的包。
+后续 UI 开发都在 [`theresia-v1.1`](../theresia-v1.1) 上进行——1.1 是基于 1.0 的新拟态重塑，
+文件结构完全相同，改 1.1 不会影响这个已发布的包。

@@ -1,13 +1,13 @@
-# Theresia V2
+# Theresia V1.1
 
 MCUG Launcher 的第三方前端：整体替换启动器界面，不改动官方界面代码、也不需要重新编译 Rust。
 
 - **包名**：`com.theresia.mcugl`
-- **显示名**：`Theresia V2`
-- **版本**：`2.0.0`（新拟态重塑）
+- **显示名**：`Theresia V1.1`
+- **版本**：`1.1.0`（新拟态重塑）
 - **内核契约**：`mcugl.kernel/v1`（`^1.0.0`）
-- **产物**：`release/com.theresia.mcugl-2.0.0.mcuglf`
-- **sha256**：`42ffa9182b9d952ffe13b4435e156cc7c49e370dd3469b23c49129fcc6ac5d1e`
+- **产物**：`release/com.theresia.mcugl-1.1.0.mcuglf`
+- **sha256**：`4ab2507eeac6ae24880ee59fd0f9dc91c560b668e084bead94784fc08206644a`
 
 ---
 
@@ -17,15 +17,15 @@ MCUG Launcher 的第三方前端：整体替换启动器界面，不改动官方
 MCUGLauncher-M/
 ├─ src/            官方内置界面（原版，随 tauri build 打包进二进制）
 ├─ index.html      ↑ 官方入口
-├─ theresia-v2/    ← 本工程：所有 UI 开发都在这里
+├─ theresia-v1.1/    ← 本工程：所有 UI 开发都在这里
 └─ src-tauri/      桌面端内核（Rust）
 ```
 
-两套界面**没有任何共享文件**：各自带 `src/`、依赖和构建配置。改 `theresia-v2/` 不会影响官方界面，反过来也一样。
+两套界面**没有任何共享文件**：各自带 `src/`、依赖和构建配置。改 `theresia-v1.1/` 不会影响官方界面，反过来也一样。
 
 ## 1. 它是什么
 
-启动器支持在运行时把整个前端换成第三方实现（目录或 `.mcuglf` 包）。Theresia V2 就是这份实现：
+启动器支持在运行时把整个前端换成第三方实现（目录或 `.mcuglf` 包）。Theresia V1.1 就是这份实现：
 
 - 页面、样式、交互全部重写，官方内置界面完全不加载；
 - 通过 `window.__TAURI_INTERNALS__.invoke` 调用与官方界面**完全相同**的命令，因此读实例、账号、设置、启动游戏的权限与官方界面一致；
@@ -34,7 +34,7 @@ MCUGLauncher-M/
 ## 2. 目录结构
 
 ```
-theresia-v2/
+theresia-v1.1/
 ├─ src/                  界面源码（独立的 React + TS 工程）
 │  ├─ theme/             16 色主色调 + 明暗模式的实现
 │  ├─ styles/            设计令牌、基础样式、通用组件
@@ -55,7 +55,7 @@ theresia-v2/
 ## 3. 构建与预览
 
 ```powershell
-cd theresia-v2
+cd theresia-v1.1
 
 npm install          # 首次
 npm run dev:demo     # 浏览器预览，端口 5175，用内存假数据
@@ -73,7 +73,7 @@ npm run pack         # 打包 → release/<identifier>-<version>.mcuglf
 
 三种方式，任选其一：
 
-1. **拖动安装（推荐）**：启动器 → 设置 → 开发者选项 → 把 `release/com.theresia.mcugl-2.0.0.mcuglf` 拖进虚线框。松手后自动完成「安装 → 启用 → 重启界面」，不需要再点按钮。
+1. **拖动安装（推荐）**：启动器 → 设置 → 开发者选项 → 把 `release/com.theresia.mcugl-1.1.0.mcuglf` 拖进虚线框。松手后自动完成「安装 → 启用 → 重启界面」，不需要再点按钮。
 2. **按钮导入**：同一个卡片里点「导入前端包…」选文件 → 弹窗确认 → 列表里点「使用」→ 点「重启前端」。
 3. **开发目录**：把 `MCUGL_FRONTEND` 指向 `dist/` 或 `.mcuglf` 绝对路径后启动，改完文件刷新窗口即生效（前端资源带 `Cache-Control: no-store`）。
 
@@ -90,8 +90,8 @@ npm run pack         # 打包 → release/<identifier>-<version>.mcuglf
 | 字段 | 值 | 规则 |
 | --- | --- | --- |
 | `identifier` | `com.theresia.mcugl` | 反向域名，3–128 位 `[a-z0-9.-_]`，避开 Windows 保留名 |
-| `name` | `Theresia V2` | 显示名 |
-| `version` | `2.0.0` | semver |
+| `name` | `Theresia V1.1` | 显示名 |
+| `version` | `1.1.0` | semver |
 | `kernelApi` | `^1.0.0` | 必须匹配启动器内核 `apiVersion` |
 | `entry` | `index.html` | 包内相对路径，且文件必须存在 |
 | `author` / `description` / `homepage` | 见文件 | 可选 |
@@ -102,7 +102,7 @@ npm run pack         # 打包 → release/<identifier>-<version>.mcuglf
 
 ## 6. 与官方界面的差异
 
-| 维度 | 官方界面 | Theresia V2 |
+| 维度 | 官方界面 | Theresia V1.1 |
 | --- | --- | --- |
 | 导航 | 顶部胶囊（5 项） | 同结构，白瓷胶囊 + 主色镂空图标（改用 mask 着色，图标随主色变） |
 | 首页 | 壁纸 + 右下三张卡（角色/实例/启动） | 壁纸 + **左侧实例轨道**（版本·加载器·模组数、运行中标记、点击切换实例）+ 右下**启动坞**（角色胶囊 + 启动目标提示 + 启动按钮） |
@@ -131,7 +131,7 @@ npm run pack         # 打包 → release/<identifier>-<version>.mcuglf
 | 拖入后没反应 | 文件不是 `.mcuglf` / `.zip` | 看卡片下方提示，只有这两种会被安装 |
 | 导入报 `VALIDATION_ERROR` | 清单字段不合法 / `entry` 不存在 / `kernelApi` 不匹配 | 对照第 5 节逐项核对 |
 | 界面白屏 | 前端运行时报错 | 按 `Ctrl+Alt+C` 切回官方，再看「运行日志」 |
-| 停用后仍显示 Theresia V2 | 浏览器演示模式下前端不会真的重载 | 正式环境由内核重建窗口；演示时以 5174（官方）/ 5175（Theresia）两个端口对比 |
+| 停用后仍显示 Theresia V1.1 | 浏览器演示模式下前端不会真的重载 | 正式环境由内核重建窗口；演示时以 5174（官方）/ 5175（Theresia）两个端口对比 |
 
 ## 9. 版本记录
 

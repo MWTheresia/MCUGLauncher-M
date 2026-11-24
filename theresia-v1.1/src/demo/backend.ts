@@ -114,8 +114,8 @@ interface DemoFrontend {
 
 const THRESIA_FRONTEND: DemoFrontend = {
   identifier: "com.theresia.mcugl",
-  name: "Theresia V2",
-  version: "2.0.0",
+  name: "Theresia V1.1",
+  version: "1.1.0",
   kernelApi: "^1.0.0",
   entry: "index.html",
   author: "Theresia",
@@ -146,7 +146,7 @@ function loadFrontends(): { items: DemoFrontend[]; active: string | null } {
       }
     }
   } catch {
-    /* 读不出来就回到默认：装上并启用 Theresia V2 */
+    /* 读不出来就回到默认：装上并启用 Theresia V1.1 */
   }
   return { items: [{ ...THRESIA_FRONTEND }], active: THRESIA_FRONTEND.identifier };
 }
@@ -212,7 +212,7 @@ export async function demoInvoke<T>(command: string, args?: Record<string, unkno
     case "read_avatar":
       return { ...state.avatar } as T;
     /*
-     * 演示模式下本界面是以「Theresia V2」这个第三方前端身份展示的：
+     * 演示模式下本界面是以「Theresia V1.1」这个第三方前端身份展示的：
      * 真实内核里是导入 .mcuglf 后由 list_frontends 读出来的，演示后端没有安装目录，
      * 因此在这里给一条固定的已安装记录，让开发者选项能如实反映「当前不是官方前端」。
      */

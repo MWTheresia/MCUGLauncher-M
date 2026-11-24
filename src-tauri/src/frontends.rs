@@ -1002,14 +1002,14 @@ mod tests {
     }
 
     /// 端到端：仓库里随包发布的真实 `.mcuglf` 必须能通过同一套校验装进来。
-    /// 目前有两份：theresia-v1（1.0.0，玻璃拟态）与 theresia-v2（2.0.0，新拟态）。
+    /// 目前有两份：theresia-v1（1.0.0，玻璃拟态）与 theresia-v1.1（2.0.0，新拟态）。
     /// 产物不在仓库里时（浅克隆/清理过）自动跳过，不阻塞其他测试。
     #[test]
     fn installs_the_shipped_theresia_packages() {
         let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("..");
         let cases = [
             ("theresia-v1/release/com.theresia.mcugl-1.0.0.mcuglf", "Theresia V1", "1.0.0"),
-            ("theresia-v2/release/com.theresia.mcugl-2.0.0.mcuglf", "Theresia V2", "2.0.0"),
+            ("theresia-v1.1/release/com.theresia.mcugl-1.1.0.mcuglf", "Theresia V1.1", "1.1.0"),
         ];
 
         for (relative, expected_name, expected_version) in cases {
