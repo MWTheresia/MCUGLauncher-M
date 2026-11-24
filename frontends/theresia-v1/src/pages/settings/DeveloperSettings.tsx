@@ -239,6 +239,8 @@ export default function DeveloperSettings({ active }: DeveloperSettingsProps) {
   };
 
   const frontendStatus = statusAt("developer:frontends");
+  /** 演示模式没有文件系统：拖放能模拟，但「导入前端包」弹不出原生选择框。 */
+  const demo = typeof window !== "undefined" && "__MCUGL_DEMO__" in window;
   const activeName = activeFrontend
     ? frontends?.find((item) => item.identifier === activeFrontend)?.name ?? activeFrontend
     : "官方前端";
@@ -327,6 +329,11 @@ export default function DeveloperSettings({ active }: DeveloperSettingsProps) {
             <span className="muted">松开后自动安装、启用并重启界面，不用再点任何按钮</span>
           </span>
         </div>
+        {demo ? (
+          <span className="status">
+            演示模式：拖放会走模拟安装；「导入前端包…」在这里不会弹出选择框，桌面端才走原生文件对话框。
+          </span>
+        ) : null}
 
         <div className="settings-actions">
           <button

@@ -172,6 +172,8 @@ export default function DeveloperSettings({ active }: DeveloperSettingsProps) {
   };
 
   const frontendStatus = statusAt("developer:frontends");
+  /** 演示模式没有文件系统：导入按钮弹不出原生选择框，这里直接说清楚，别让人以为按钮坏了。 */
+  const demo = typeof window !== "undefined" && "__MCUGL_DEMO__" in window;
 
   return (
     <div className="settings-cards">
@@ -235,6 +237,11 @@ export default function DeveloperSettings({ active }: DeveloperSettingsProps) {
           切换后点「重启前端」立即生效；如果第三方界面白屏或卡死，按 Ctrl+Alt+C
           可强制切回官方前端，启动器不会退出。
         </span>
+        {demo ? (
+          <span className="status">
+            演示模式：这里没有文件系统，导入按钮不会弹出选择框（内核命令 `install_frontend` 在桌面端才有实现）。
+          </span>
+        ) : null}
         <div className="settings-actions">
           <button
             type="button"

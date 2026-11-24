@@ -149,6 +149,26 @@ export async function demoInvoke<T>(command: string, args?: Record<string, unkno
       return snapshot(state.community) as T;
     case "read_avatar":
       return { ...state.avatar } as T;
+    /*
+     * 前端包管理：真实内核有完整的 six 条命令（src-tauri/src/commands/frontends.rs），
+     * 但演示后端没有文件系统，装不了包。这里如实返回「空列表」，并让写操作给出
+     * 一句能看懂的解释，而不是笼统的 UNSUPPORTED。
+     */
+    case "list_frontends":
+      return { active: null, items: [] } as T;
+    case "read_frontend_icon":
+      return null as T;
+    case "install_frontend":
+      throw new DemoApiError(
+        "演示模式没有文件系统，装不了前端包。请在 npm run tauri dev 里导入，或把 MCUGL_FRONTEND 指向已构建的前端目录。",
+        "UNSUPPORTED",
+        false,
+      );
+    case "use_frontend":
+    case "remove_frontend":
+      throw new DemoApiError("演示模式里没有可切换的前端包。", "UNSUPPORTED", false);
+    case "reload_frontend":
+      return saved("演示模式不会真的重建窗口。") as T;
     case "get_system_info": {
       const info: SystemInfo = {
         app: "0.22.3 (demo)",
