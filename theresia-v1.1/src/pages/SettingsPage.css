@@ -507,10 +507,36 @@
   box-shadow: inset 0 0 0 1px var(--app-accent);
 }
 
-.logo-material-icon {
+/* 小镐：木柄固定，镐头才是材质色 */
+.pickaxe {
+  position: relative;
+  display: block;
   width: 22px;
   height: 22px;
-  color: var(--material-color, var(--app-ink-2));
+}
+
+.pickaxe-handle,
+.pickaxe-head {
+  position: absolute;
+  inset: 0;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+.pickaxe-handle {
+  background: #a9773f;
+  -webkit-mask-image: url("../assets/icons/tools/pickaxe-handle.svg");
+  mask-image: url("../assets/icons/tools/pickaxe-handle.svg");
+}
+
+.pickaxe-head {
+  background: var(--material-color, var(--app-ink-2));
+  -webkit-mask-image: url("../assets/icons/tools/pickaxe-head.svg");
+  mask-image: url("../assets/icons/tools/pickaxe-head.svg");
 }
 
 /* 默认项没有材质色，用一枚灰色小方块表示「原色」 */

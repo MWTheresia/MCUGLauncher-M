@@ -1,6 +1,4 @@
 import { useRef, useState } from "react";
-import pickaxeIcon from "../../assets/icons/tools/pickaxe.svg";
-import SvgIcon from "../../components/SvgIcon";
 import { resetWindow as resetWindowCommand } from "../../api/commands/settings";
 import { AppSelect } from "../../components/AppInput";
 import { useI18n } from "../../i18n";
@@ -102,7 +100,10 @@ export default function AppearanceSettings({ active }: AppearanceSettingsProps) 
                   style={{ ["--material-color" as string]: material.base }}
                   onClick={() => setLogoMaterial(material.id)}
                 >
-                  <SvgIcon className="logo-material-icon" src={pickaxeIcon} />
+                  <span className="pickaxe" aria-hidden="true">
+                    <span className="pickaxe-handle" />
+                    <span className="pickaxe-head" />
+                  </span>
                   <span className="logo-material-label">{material.label}</span>
                 </button>
               ))}
