@@ -1,0 +1,804 @@
+/* 通用组件样式：对应 Theme.axaml 里的 TextBlock/Button/TextBox/ListBox/TabControl 选择器 */
+
+.page-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1c252d;
+  letter-spacing: -0.3px;
+}
+
+.h2 {
+  font-size: 15px;
+  font-weight: 700;
+  color: #232c35;
+}
+
+.muted {
+  color: var(--app-ink-3);
+  font-size: 10.5px;
+  line-height: 1.55;
+}
+
+.small {
+  color: var(--app-ink-3);
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.status {
+  color: var(--app-accent-dark);
+  font-size: 10.5px;
+  line-height: 1.55;
+  word-break: break-all;
+}
+
+.card {
+  border: 0;
+  border-radius: var(--radius-card);
+  padding: 16px;
+  box-shadow: var(--shadow-card);
+  background-color: var(--app-glass);
+  background-image: var(--app-glass-grain);
+  background-size: 160px 160px;
+  backdrop-filter: var(--app-glass-blur);
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+}
+
+.spacer {
+  flex: 1;
+}
+
+/* 一行里混放复选框和多个数字/文本字段，自动按列对齐。 */
+.launch-numbers {
+  display: grid;
+  grid-template-columns: minmax(140px, 1.2fr) repeat(3, minmax(96px, 1fr));
+  gap: 12px;
+  align-items: end;
+}
+
+.launch-numbers .field {
+  min-width: 0;
+}
+
+@media (max-width: 1280px) {
+  .launch-numbers {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* ---------- 按钮 ---------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  height: var(--button-height);
+  padding: 0 12px;
+  border: 1px solid var(--app-line-2);
+  border-radius: var(--radius-btn);
+  background: #fff;
+  color: #414b55;
+  font-size: 12px;
+  cursor: pointer;
+  transition:
+    background-color 120ms linear,
+    color 120ms linear,
+    border-color 120ms linear;
+  white-space: nowrap;
+}
+
+.btn:hover {
+  background: var(--app-accent-wash);
+  color: var(--app-accent-deep);
+}
+
+.btn:disabled {
+  cursor: default;
+  opacity: 0.65;
+}
+
+.btn.primary {
+  border: 0;
+  background: var(--app-accent);
+  color: #fff;
+  font-weight: 600;
+}
+
+.btn.primary:hover {
+  background: #2c6193;
+}
+
+.btn.primary:disabled {
+  background: #acc3d9;
+  color: #fff;
+}
+
+.btn.soft {
+  border: 0;
+  background: var(--app-accent-tint);
+  color: var(--app-accent-deep);
+  font-weight: 600;
+}
+
+.btn.soft:hover {
+  background: #dee9f3;
+}
+
+.btn.ghost {
+  background: #fff;
+  border-color: var(--app-line-2);
+  color: #414b55;
+}
+
+.btn.ghost:hover {
+  background: var(--app-accent-wash);
+  color: var(--app-accent-deep);
+}
+
+.btn.link {
+  height: 26px;
+  padding: 0 4px;
+  border: 0;
+  background: transparent;
+  color: var(--app-accent-dark);
+  font-size: 11px;
+}
+
+.btn.link:hover {
+  background: transparent;
+  color: var(--app-accent-deep);
+  text-decoration: underline;
+}
+
+.btn.topnav {
+  height: 34px;
+  padding: 0 15px;
+  border: 0;
+  background: transparent;
+  border-radius: var(--radius-btn);
+  color: #545d66;
+  font-size: 12.5px;
+}
+
+.btn.topnav:hover {
+  background: #e8f0f7;
+  color: var(--app-accent-deep);
+}
+
+.btn.topnav.active {
+  background: var(--app-accent-soft);
+  color: var(--app-accent-deep);
+  font-weight: 600;
+}
+
+.btn.icon {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: #505961;
+}
+
+.btn.icon:hover {
+  background: #f2f6f3;
+}
+
+.btn.icon.close:hover {
+  background: #facdd1;
+  color: #fff;
+}
+
+.btn.icon img {
+  width: 16px;
+  height: 16px;
+  opacity: 0.75;
+}
+
+.btn.avatar {
+  width: 94px;
+  height: 94px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.btn.avatar:hover {
+  background: var(--app-accent-wash);
+}
+
+/* ---------- 悬停提示 ---------- */
+
+/*
+ * 用法：把 title 换成 data-tip，悬停即刻在按钮正上方显示黑底白字提示；
+ * 加 data-tip-side="right" 改为显示在右侧。
+ */
+[data-tip] {
+  position: relative;
+}
+
+[data-tip]::after {
+  content: attr(data-tip);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 7px);
+  z-index: 60;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: var(--tip-bg);
+  color: var(--tip-ink);
+  font-size: 10.5px;
+  font-weight: 400;
+  line-height: 1.5;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, 2px);
+  transition:
+    opacity 80ms linear,
+    transform 80ms linear;
+}
+
+[data-tip]:hover::after,
+[data-tip]:focus-visible::after {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+[data-tip][data-tip-side='right']::after {
+  left: calc(100% + 7px);
+  top: 50%;
+  bottom: auto;
+  transform: translate(-2px, -50%);
+}
+
+[data-tip][data-tip-side='right']:hover::after,
+[data-tip][data-tip-side='right']:focus-visible::after {
+  transform: translate(0, -50%);
+}
+
+[data-tip][data-tip-side='left']::after {
+  right: calc(100% + 7px);
+  left: auto;
+  top: 50%;
+  bottom: auto;
+  transform: translate(2px, -50%);
+}
+
+[data-tip][data-tip-side='left']:hover::after,
+[data-tip][data-tip-side='left']:focus-visible::after {
+  transform: translate(0, -50%);
+}
+
+/* 顶部按钮用：提示向下展开，避免挡住窗口标题区域 */
+[data-tip][data-tip-side='bottom']::after {
+  top: calc(100% + 7px);
+  bottom: auto;
+  transform: translate(-50%, -2px);
+}
+
+[data-tip][data-tip-side='bottom']:hover::after,
+[data-tip][data-tip-side='bottom']:focus-visible::after {
+  transform: translate(-50%, 0);
+}
+
+/* ---------- 开关与设置行 ---------- */
+
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 2px 0;
+}
+
+.setting-title {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--app-ink);
+}
+
+/*
+ * 设置项状态标签（DEV / BETA / ERR）。
+ * 默认即 DEV 的黄底黑字，另外两种只覆盖两个颜色变量。
+ */
+.setting-tag {
+  --tag-bg: #f2c14e;
+  --tag-fg: #241d00;
+  display: inline-flex;
+  align-items: center;
+  height: 16px;
+  margin-left: 6px;
+  padding: 0 5px;
+  border-radius: 4px;
+  background: var(--tag-bg);
+  color: var(--tag-fg);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  vertical-align: 1px;
+  user-select: none;
+}
+
+.setting-tag[data-tag='beta'] {
+  --tag-bg: #17b6c9;
+  --tag-fg: #fff;
+}
+
+.setting-tag[data-tag='dep'] {
+  --tag-bg: #b8863b;
+  --tag-fg: #fff;
+}
+
+/*
+ * 设置标题后的圆形问号标签：外观与 DEV 标签同高，但用边框和问号表示「可查看说明」。
+ * 说明文本走全局 data-tip，长文本在左侧设置列向右展开并自动换行。
+ */
+.setting-hint {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  margin-left: 6px;
+  border: 1px solid var(--app-line-2);
+  border-radius: 50%;
+  background: var(--app-card);
+  color: var(--app-ink-3);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  vertical-align: 1px;
+  user-select: none;
+  transition:
+    color 120ms linear,
+    border-color 120ms linear,
+    background-color 120ms linear;
+}
+
+.setting-hint:hover,
+.setting-hint:focus-visible {
+  border-color: var(--app-accent-soft);
+  background: var(--app-accent-wash);
+  color: var(--app-accent-deep);
+  outline: none;
+}
+
+[data-tip].setting-hint::after {
+  width: max-content;
+  max-width: 240px;
+  white-space: normal;
+  text-align: left;
+  line-height: 1.5;
+}
+
+.switch {
+  flex: none;
+  width: 40px;
+  height: 22px;
+  padding: 2px;
+  border: 0;
+  border-radius: 999px;
+  background: rgb(20 30 42 / 14%);
+  cursor: pointer;
+  transition: background-color 140ms linear;
+}
+
+.switch-thumb {
+  display: block;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 18%);
+  transition: transform 170ms cubic-bezier(0.3, 0.7, 0.4, 1);
+}
+
+.switch:hover {
+  background: rgb(20 30 42 / 20%);
+}
+
+.switch.on {
+  background: var(--app-accent);
+}
+
+.switch.on:hover {
+  background: var(--app-accent-dark);
+}
+
+.switch.on .switch-thumb {
+  transform: translateX(18px);
+}
+
+/* ---------- 表单 ---------- */
+
+.input,
+.select {
+  width: 100%;
+  height: var(--control-height);
+  padding: 0 10px;
+  border: 1px solid var(--app-line-2);
+  border-radius: var(--radius-input);
+  background: #fbfdfc;
+  color: var(--app-ink);
+  font-size: 12px;
+  outline: none;
+  transition:
+    border-color 120ms linear,
+    box-shadow 120ms linear;
+}
+
+.input:focus,
+.select:focus {
+  border-color: #739fc7;
+  box-shadow: 0 0 0 3px rgb(0 0 0 / 9%);
+}
+
+.select {
+  appearance: none;
+  padding-right: 26px;
+  background-image:
+    linear-gradient(45deg, transparent 50%, #7c8791 50%),
+    linear-gradient(135deg, #7c8791 50%, transparent 50%);
+  background-position:
+    calc(100% - 14px) 15px,
+    calc(100% - 9px) 15px;
+  background-size:
+    5px 5px,
+    5px 5px;
+  background-repeat: no-repeat;
+}
+
+textarea.input {
+  height: auto;
+  padding: 8px 10px;
+  resize: vertical;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field-label {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #3a444e;
+}
+
+.field-hint {
+  color: var(--app-ink-3);
+  font-size: 10.5px;
+  line-height: 1.5;
+}
+
+.checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--app-ink-2);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.checkbox input[type='checkbox'] {
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  accent-color: var(--app-accent);
+}
+
+.input:disabled,
+.select:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+/* ---------- 标签页 ---------- */
+
+.tabs {
+  display: flex;
+  gap: 2px;
+  border-bottom: 1px solid var(--app-line);
+  padding: 0 2px;
+}
+
+.tab {
+  position: relative;
+  height: 36px;
+  padding: 0 12px;
+  border: 0;
+  background: transparent;
+  color: var(--app-ink-3);
+  font-size: 11.5px;
+  cursor: pointer;
+}
+
+.tab:hover {
+  color: var(--app-ink);
+}
+
+.tab.active {
+  color: var(--app-ink);
+  font-weight: 600;
+}
+
+.tab.active::after {
+  content: '';
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: -1px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--app-accent);
+}
+
+/* ---------- 列表 ---------- */
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: transparent;
+  border: 0;
+  overflow-y: auto;
+}
+
+.list-item {
+  padding: 7px 10px;
+  border-radius: var(--radius-input);
+  color: var(--app-ink-2);
+  cursor: pointer;
+}
+
+.list-item:hover {
+  background: #e7eff6;
+  color: var(--app-accent-deep);
+}
+
+.list-item.selected {
+  background: var(--app-accent-soft);
+  color: var(--app-accent-deep);
+  font-weight: 600;
+}
+
+/* ---------- 进度 ---------- */
+
+.progress {
+  height: 6px;
+  border-radius: 3px;
+  background: #edf3fd;
+  overflow: hidden;
+}
+
+.progress > span {
+  display: block;
+  height: 100%;
+  border-radius: 3px;
+  background: var(--app-accent);
+  transition: width 200ms linear;
+}
+
+/* ---------- 占位与徽标 ---------- */
+
+.empty {
+  display: grid;
+  place-items: center;
+  min-height: 120px;
+  color: var(--app-ink-3);
+  font-size: 10.5px;
+  text-align: center;
+  line-height: 1.7;
+  white-space: pre-line;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  height: 18px;
+  padding: 0 7px;
+  border-radius: 9px;
+  background: var(--app-accent-tint);
+  color: var(--app-accent-deep);
+  font-size: 10px;
+}
+
+.badge.amber {
+  background: var(--app-amber-bg);
+  color: var(--app-amber);
+}
+
+.badge.red {
+  background: var(--app-red-bg);
+  color: var(--app-red);
+}
+
+/* ---------- 弹层 ---------- */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  background: rgb(18 31 43 / 25%);
+  animation: modal-mask-in 160ms linear both;
+}
+
+/* 遮罩淡入淡出；卡片跟着轻微缩放上浮，收起时反过来 */
+@keyframes modal-mask-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes modal-mask-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes modal-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.97);
+  }
+}
+
+@keyframes modal-card-out {
+  to {
+    opacity: 0;
+    transform: translateY(4px) scale(0.985);
+  }
+}
+
+.modal-overlay.is-leaving {
+  animation: modal-mask-out 160ms linear both;
+}
+
+.modal-overlay.is-leaving .modal-card {
+  animation: modal-card-out 160ms ease-in both;
+}
+
+.modal-card {
+  width: 430px;
+  max-width: calc(100vw - 48px);
+  max-height: calc(100vh - 64px);
+  overflow-y: auto;
+  padding: 22px;
+  border: 0;
+  border-radius: 14px;
+  box-shadow: var(--shadow-dialog);
+  background-color: var(--app-glass-strong);
+  background-image: var(--app-glass-grain);
+  background-size: 160px 160px;
+  backdrop-filter: blur(32px) saturate(135%);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  animation: modal-card-in 180ms cubic-bezier(0.22, 0.88, 0.3, 1) both;
+}
+
+.modal-title {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.modal-actions .btn {
+  width: 88px;
+}
+
+/* ---------- 右键菜单 ---------- */
+
+.context-menu {
+  position: fixed;
+  z-index: 30;
+  min-width: 120px;
+  padding: 3px;
+  border: 0;
+  border-radius: var(--radius-btn);
+  box-shadow: var(--shadow-card);
+  background-color: var(--app-glass-strong);
+  background-image: var(--app-glass-grain);
+  background-size: 160px 160px;
+  backdrop-filter: var(--app-glass-blur);
+}
+
+.context-menu button {
+  display: block;
+  width: 100%;
+  padding: 6px 12px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--app-ink);
+  font-size: 12px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.context-menu button:hover {
+  background: var(--app-accent-wash);
+  color: var(--app-accent-deep);
+}
+
+/* ---------- 页面骨架 ---------- */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+  min-height: 0;
+  padding: 20px 3px 20px 20px;
+}
+
+.page-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.page-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 11px;
+}
+
+.page-status {
+  flex: none;
+}
+
+/* 更多页：左侧分区导航 + 右侧页面 */
+.extras {
+  display: grid;
+  grid-template-columns: 184px minmax(0, 1fr);
+  gap: 14px;
+  height: 100%;
+  min-height: 0;
+  padding: 20px 3px 20px 20px;
+}
+
+.extras-nav {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.extras-panel {
+  height: 100%;
+  min-height: 0;
+}
+
+.extras-panel[hidden] {
+  display: none;
+}
+
+.subpage {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+  min-height: 0;
+}

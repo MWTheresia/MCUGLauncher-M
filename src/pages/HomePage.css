@@ -1,0 +1,491 @@
+.home {
+    position: relative;
+    height: 100%;
+    min-height: 0;
+    padding: 20px 3px 20px 20px;
+}
+
+/* ---------- 右下角启动区 ---------- */
+
+.home-launch {
+  position: absolute;
+  right: 3px;
+  bottom: 20px;
+  margin-right: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  max-width: 500px;
+  z-index: 1; /* 压在水波之上 */
+}
+
+/* 居中：整栏贴页面中线，toast 与按钮行横向居中；控件顺序由 HomePage 重排 */
+.home-launch.is-centered {
+  right: auto;
+  left: 50%;
+  margin-right: 0;
+  align-items: center;
+  transform: translateX(-50%);
+}
+
+/* ---------- 启动时的水波与相邻卡片抖动 ---------- */
+
+.ripple-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* 圆心的空洞半径，随扩散一起变大：水波从圆心向外退去 */
+@property --ripple-hole {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 0%;
+}
+
+.ripple {
+  /* 水波扩散倍数：默认值用于静态校验，实际每个水波由 HomePage.tsx 按点击距离写入 */
+  --ripple-scale: 40;
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgb(34 140 255 / 0%) var(--ripple-hole),
+    rgb(34 140 255 / 30%) calc(var(--ripple-hole) + 18%),
+    rgb(34 140 255 / 0%) calc(var(--ripple-hole) + 38%)
+  );
+  opacity: 0;
+  transform: scale(0);
+  animation: ripple-spread 900ms cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+}
+
+@keyframes ripple-spread {
+  0% {
+    opacity: 0.85;
+    transform: scale(0.2);
+    --ripple-hole: 0%;
+  }
+  55% {
+    opacity: 0.45;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(var(--ripple-scale));
+    --ripple-hole: 30%;
+  }
+}
+
+/* 角色卡与实例卡跟随水波轻轻一顿 */
+.launch-row.is-bumping .player-card,
+.launch-row.is-bumping .btn.instance-card {
+  animation: card-bump 420ms cubic-bezier(0.3, 0.7, 0.4, 1);
+}
+
+@keyframes card-bump {
+  0% {
+    transform: none;
+  }
+  22% {
+    transform: translateY(-2px) scale(0.994);
+  }
+  54% {
+    transform: translateY(1px) scale(1.004);
+  }
+  78% {
+    transform: translateY(-0.5px);
+  }
+  100% {
+    transform: none;
+  }
+}
+
+/* 角色、实例、启动三个按钮同高并排，底边对齐 */
+.launch-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+/* ---------- 角色卡（参照 SJMCL 主页的角色选择） ---------- */
+
+.player-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 200px;
+  height: 72px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: var(--radius-launch);
+  box-shadow: var(--shadow-card);
+  background-color: var(--app-glass);
+  background-image: var(--app-glass-grain);
+  background-size: 160px 160px;
+  backdrop-filter: var(--app-glass-blur);
+}
+
+.player-card-main {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.player-card-avatar {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  background: var(--app-side);
+  image-rendering: pixelated;
+}
+
+.player-card-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.player-card-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--app-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.player-card-type {
+  font-size: 10px;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 卡片右上角的白色小方钮：角色卡与实例卡共用 */
+.btn.card-action {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  z-index: 2;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 7px;
+  background: #fff;
+  color: var(--app-ink-2);
+}
+
+.btn.card-action:hover {
+  background: rgb(0 0 0 / 10%);
+  color: var(--app-ink);
+}
+
+.btn.card-action img {
+  width: 13px;
+  height: 13px;
+}
+
+/* 角色选择浮层：从角色卡上方展开，角色多时内部滚动 */
+.player-picker {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 10px);
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 240px;
+  max-height: 216px;
+  overflow-y: auto;
+  padding: 6px;
+  border: 0;
+  border-radius: 10px;
+  box-shadow: var(--shadow-dialog);
+  background-color: var(--app-glass-strong);
+  background-image: var(--app-glass-grain);
+  background-size: 160px 160px;
+  backdrop-filter: blur(32px) saturate(135%);
+  transform-origin: bottom right;
+  animation: player-picker-in 160ms cubic-bezier(0.22, 0.88, 0.3, 1) both;
+}
+
+.player-picker.is-closing {
+  animation: player-picker-out 140ms ease-in both;
+  pointer-events: none;
+}
+
+@keyframes player-picker-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.97);
+  }
+}
+
+@keyframes player-picker-out {
+  to {
+    opacity: 0;
+    transform: translateY(4px) scale(0.98);
+  }
+}
+
+.player-picker-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 8px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.player-picker-item:hover {
+  background: var(--app-accent-wash);
+}
+
+.player-picker-item.selected {
+  background: var(--app-accent-tint);
+}
+
+.player-picker-radio {
+  flex: none;
+  width: 12px;
+  height: 12px;
+  border: 1.5px solid var(--app-line-2);
+  border-radius: 50%;
+}
+
+.player-picker-item.selected .player-picker-radio {
+  border-color: var(--app-accent);
+  background: var(--app-accent);
+  box-shadow: inset 0 0 0 2.5px var(--app-glass-strong);
+}
+
+.player-picker-avatar {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  background: var(--app-side);
+  image-rendering: pixelated;
+}
+
+.player-picker-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.player-picker-name {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--app-ink);
+}
+
+.player-picker-empty {
+  margin: 0;
+  padding: 8px;
+}
+
+/* 实例卡：与角色卡同尺寸，点整块切换实例 */
+.instance-block {
+  position: relative;
+  width: 200px;
+  height: 72px;
+}
+
+.btn.instance-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  width: 100%;
+  height: 100%;
+  padding: 0 12px;
+  border: 0;
+  border-radius: var(--radius-launch);
+  box-shadow: var(--shadow-card);
+  background-color: var(--app-glass);
+  background-image: var(--app-glass-grain);
+  background-size: 160px 160px;
+  backdrop-filter: var(--app-glass-blur);
+  transition: background-color 120ms linear;
+}
+
+.btn.instance-card:hover {
+  background-color: rgb(255 255 255 / 72%);
+  background-image: var(--app-glass-grain);
+  color: inherit;
+}
+
+.instance-card-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--app-ink);
+}
+
+.instance-card-sub {
+  max-width: 100%;
+  font-size: 10.5px;
+  color: var(--app-ink-3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 启动：圆角正方形、纯色亮蓝、仅图标（静止态淡泛光，悬停加强） */
+.btn.launch-square {
+  flex: none;
+  width: 72px;
+  height: 72px;
+  padding: 0;
+  border: 0;
+  border-radius: 20px;
+  color: #fff;
+  background: #228cff;
+  /* 静止态也保留一圈很淡的泛光，悬停时再明显加强 */
+  box-shadow: 0 0 15px rgb(34 140 255 / 32%);
+  transition: background-color 140ms linear, box-shadow 160ms ease-out, transform 160ms ease-out;
+}
+
+.btn.launch-square:not(:disabled):hover {
+  color: #fff;
+  background: #3d9bff;
+  box-shadow: 0 0 28px rgb(34 140 255 / 55%), 0 0 56px rgb(34 140 255 / 28%);
+  transform: scale(1.06);
+}
+
+.btn.launch-square:disabled {
+  /* 没有实例可启动时也要看起来是「实心按钮」：
+     默认 .btn:disabled 的 65% 透明 + .btn:hover 的白底会让它像玻璃，
+     所以这里显式盖回不透明底色，并让 hover 不改变外观。 */
+  background: #7fb2e0;
+  color: #f4f9ff;
+  opacity: 1;
+  box-shadow: none;
+  cursor: default;
+}
+
+.btn.launch-square:disabled:hover {
+  background: #7fb2e0;
+  transform: none;
+}
+
+.btn.launch-square img {
+  width: 30px;
+  height: 30px;
+}
+
+/* 启动中：图标换成 X，点击取消 */
+.btn.launch-square .launch-cancel-icon {
+  width: 30px;
+  height: 30px;
+}
+
+/* 实例选择浮层：从实例卡上方展开，实例多时在内部滚动 */
+.instance-picker {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 10px);
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 240px;
+  max-height: 216px;
+  overflow-y: auto;
+  padding: 6px;
+  border: 0;
+  border-radius: 10px;
+  box-shadow: var(--shadow-dialog);
+  background-color: var(--app-glass-strong);
+  background-image: var(--app-glass-grain);
+  background-size: 160px 160px;
+  backdrop-filter: blur(32px) saturate(135%);
+}
+
+.instance-picker-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: flex-start;
+  width: 100%;
+  padding: 7px 9px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--app-ink);
+  text-align: left;
+  cursor: pointer;
+}
+
+.instance-picker-item:hover {
+  background: var(--app-accent-wash);
+}
+
+.instance-picker-item.selected {
+  background: var(--app-accent-tint);
+}
+
+.instance-picker-name {
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.instance-picker-empty {
+  margin: 0;
+  padding: 8px;
+}
+
+/* ---------- Markdown 公告 ---------- */
+
+.markdown {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--app-ink);
+}
+
+.markdown h2 {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.markdown h3 {
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.markdown h4 {
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.markdown li {
+    margin-left: 18px;
+}
+
+.markdown blockquote {
+    margin: 0;
+    padding: 4px 10px;
+    border-left: 3px solid var(--app-accent-soft);
+    color: var(--app-ink-2);
+}
+
+.md-gap {
+    height: 4px;
+}
