@@ -37,7 +37,6 @@ function fileName(path: string): string {
 
 /** 开发者选项：状态栏按钮、第三方前端与运行日志。 */
 export default function DeveloperSettings({ active }: DeveloperSettingsProps) {
-  const forceGames = useTopStatusForced("games");
   const forceTasks = useTopStatusForced("tasks");
   const { say, statusAt } = useSettingsStatus();
   const { resourceVersions, refreshSettingsResources } = useSettingsData();
@@ -254,25 +253,6 @@ export default function DeveloperSettings({ active }: DeveloperSettingsProps) {
           </>
         }
       >
-        <SettingRow
-          title={
-            <>
-              强制显示运行实例按钮
-            </>
-          }
-          control={
-            <button
-              type="button"
-              role="switch"
-              aria-checked={forceGames}
-              aria-label="强制显示运行实例按钮"
-              className={`switch${forceGames ? " on" : ""}`}
-              onClick={() => setTopStatusForced("games", !forceGames)}
-            >
-              <span className="switch-thumb" />
-            </button>
-          }
-        />
         <SettingRow
           title={
             <>

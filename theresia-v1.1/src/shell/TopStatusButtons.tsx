@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import navGames from "../assets/icons/nav/nav-games.svg";
 import navTasks from "../assets/icons/nav/nav-tasks.svg";
 import { stopGame } from "../api/commands/games";
-import SvgIcon from "../components/SvgIcon";
 import { taskAction } from "../api/commands/tasks";
+import SvgIcon from "../components/SvgIcon";
 import { useLauncher } from "../state/launcher";
 import type { GameSessionInfo, TaskInfo } from "../types/launcher";
 import { useTopStatusForced } from "./topStatusPreference";
@@ -14,7 +13,7 @@ type StatusKey = "games" | "tasks";
 /** 与 TopStatusButtons.css 的淡出时长保持一致。 */
 const EXIT_MS = 140;
 
-/** 这些状态的任务已经结束，不再占用右上角的下载入口。 */
+/** 这些状态的任务已经结束，不再占用下载入口。 */
 const TERMINAL_TASKS = new Set(["succeeded", "failed", "cancelled"]);
 
 const TASK_ACTIONS: { key: string; label: string }[] = [
@@ -45,22 +44,20 @@ function taskPercent(task: TaskInfo): number | null {
 }
 
 /**
- * 右上角的状态入口：有游戏在跑、或有未结束的下载任务时才出现。
- * 单按钮是圆形，两个按钮合成一枚胶囊；按钮的出现顺序决定左右顺序（先出现的更靠右）。
+ * 两个独立的状态浮窗：
+ * - 运行实例：左下角常驻圆形，屏幕红=没有实例在跑，绿=有；两个及以上在屏幕上显示数字。
+ * - 下载任务：右上角圆形，只在有未结束任务时出现。
  */
 export default function TopStatus() {
   const { games, tasks, instances, refreshGames, refreshTasks } = useLauncher();
-  const forceGames = useTopStatusForced("games");
   const forceTasks = useTopStatusForced("tasks");
-  const rootRef = useRef<HTMLDivElement>(null);
+  const gamesRef = useRef<HTMLDivElement>(null);
+  const tasksRef = useRef<HTMLDivElement>(null);
 
   const runningGames = games.filter((game) => game.status === "running");
   const activeTasks = tasks.filter((task) => !TERMINAL_TASKS.has(task.status));
-  const showGames = forceGames || runningGames.length > 0;
   const showTasks = forceTasks || activeTasks.length > 0;
 
-  /** 按「先出现」记录顺序；row-reverse 渲染时数组开头的一枚落在最右边。 */
-  const [order, setOrder] = useState<StatusKey[]>([]);
   const [open, setOpen] = useState<StatusKey | null>(null);
   const [closing, setClosing] = useState(false);
   const [busy, setBusy] = useState("");
@@ -74,10 +71,6 @@ export default function TopStatus() {
     closeTimer.current = null;
   }, []);
 
-  /**
-   * 先让当前浮窗淡出，再决定是打开另一个浮窗还是收起。
-   * 切换入口时旧内容会保留到淡出结束，避免内容瞬间替换造成的闪跳。
-   */
   const closePanel = useCallback(
     (next: StatusKey | null) => {
       if (open === null) {
@@ -103,29 +96,18 @@ export default function TopStatus() {
 
   useEffect(() => clearCloseTimer, [clearCloseTimer]);
 
+  // 下载入口消失时，连带收掉它下面的浮窗。
   useEffect(() => {
-    setOrder((previous) => {
-      const next = previous.filter((key) => (key === "games" ? showGames : showTasks));
-      if (showGames && !next.includes("games")) next.push("games");
-      if (showTasks && !next.includes("tasks")) next.push("tasks");
-      if (next.length === previous.length && next.every((key, index) => key === previous[index])) {
-        return previous;
-      }
-      return next;
-    });
-  }, [showGames, showTasks]);
-
-  // 入口消失时，连带收掉它下面的浮窗。
-  useEffect(() => {
-    if (open === "games" && !showGames) closePanel(null);
-    else if (open === "tasks" && !showTasks) closePanel(null);
-  }, [open, showGames, showTasks, closePanel]);
+    if (open === "tasks" && !showTasks) closePanel(null);
+  }, [open, showTasks, closePanel]);
 
   // 点浮窗外面或按 Esc 关闭。
   useEffect(() => {
     if (!open) return;
     const onPointerDown = (event: PointerEvent) => {
-      if (!rootRef.current?.contains(event.target as Node)) closePanel(null);
+      const target = event.target as Node;
+      if (gamesRef.current?.contains(target) || tasksRef.current?.contains(target)) return;
+      closePanel(null);
     };
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") closePanel(null);
@@ -137,17 +119,6 @@ export default function TopStatus() {
       document.removeEventListener("keydown", onKeyDown);
     };
   }, [open, closePanel]);
-
-  if (!showGames && !showTasks && open === null) return null;
-
-  let shownOrder = order.filter((key) => (key === "games" ? showGames : showTasks));
-  if (shownOrder.length === 0) {
-    shownOrder = [];
-    if (showGames) shownOrder.push("games");
-    if (showTasks) shownOrder.push("tasks");
-  }
-
-  const title = open === "games" ? "正在运行的实例" : "下载任务";
 
   const toggle = (key: StatusKey) => {
     setStatus("");
@@ -187,38 +158,36 @@ export default function TopStatus() {
     }
   };
 
-  return (
-    <div
-      ref={rootRef}
-      className={`top-status${shownOrder.length > 1 ? " is-paired" : " is-single"}`}
-    >
-      <div className="top-status-buttons glass-surface glass-pill">
-        {shownOrder.map((key) => (
-          <button
-            key={key}
-            type="button"
-            className={`top-status-button${open === key ? " is-open" : ""}`}
-            data-tip={key === "games" ? "正在运行的实例" : "下载任务"}
-            data-tip-side="bottom"
-            aria-label={key === "games" ? "正在运行的实例" : "下载任务"}
-            aria-haspopup="dialog"
-            aria-expanded={open === key}
-            onClick={() => toggle(key)}
-          >
-            <SvgIcon className="top-status-icon" src={key === "games" ? navGames : navTasks} />
-          </button>
-        ))}
-      </div>
+  const count = runningGames.length;
+  const live = count > 0;
 
-      {open ? (
-        <div
-          key={open}
-          className={`top-status-popover glass-surface glass-panel${closing ? " is-closing" : ""}`}
-          role="dialog"
-          aria-label={title}
+  return (
+    <>
+      {/* 左下角常驻：电脑屏幕就是状态灯 */}
+      <div className="orb instances" ref={gamesRef}>
+        <button
+          type="button"
+          className={`orb-button${live ? " is-live" : " is-idle"}${open === "games" ? " is-open" : ""}`}
+          aria-label={live ? `${count} 个实例正在运行` : "没有正在运行的实例"}
+          aria-haspopup="dialog"
+          aria-expanded={open === "games"}
+          data-tip={live ? `运行中：${count} 个实例` : "没有正在运行的实例"}
+          data-tip-side="right"
+          onClick={() => toggle("games")}
         >
-          {open === "games" ? (
-            runningGames.length === 0 ? (
+          <span className="orb-monitor" aria-hidden="true">
+            <span className="orb-screen">{count >= 2 ? count : null}</span>
+            <span className="orb-stand" />
+          </span>
+        </button>
+
+        {open === "games" ? (
+          <div
+            className={`orb-popover${closing ? " is-closing" : ""}`}
+            role="dialog"
+            aria-label="正在运行的实例"
+          >
+            {runningGames.length === 0 ? (
               <p className="top-status-empty">当前没有正在运行的实例。</p>
             ) : (
               <div className="top-status-list">
@@ -244,60 +213,92 @@ export default function TopStatus() {
                   </article>
                 ))}
               </div>
-            )
-          ) : activeTasks.length === 0 ? (
-            <p className="top-status-empty">当前没有排队或运行中的任务。</p>
-          ) : (
-            <div className="top-status-list">
-              {activeTasks.map((task) => {
-                const percent = taskPercent(task);
-                const actions = TASK_ACTIONS.filter((action) =>
-                  task.allowedActions.includes(action.key)
-                );
-                return (
-                  <article className="top-status-item" key={task.id}>
-                    <div className="top-status-item-head">
-                      <span className="top-status-item-name">{task.name}</span>
-                      <span className="top-status-pill">{statusText(task.status)}</span>
-                    </div>
-                    <span className="top-status-meta">
-                      {task.phase}
-                      {percent === null ? "" : ` · ${percent}%`}
-                    </span>
-                    {percent === null ? null : (
-                      <div className="top-status-track" aria-hidden="true">
-                        <span className="top-status-fill" style={{ width: `${percent}%` }} />
-                      </div>
-                    )}
-                    {task.error ? <p className="top-status-error">{task.error.message}</p> : null}
-                    {actions.length > 0 ? (
-                      <div className="top-status-actions">
-                        {actions.map((action) => (
-                          <button
-                            key={action.key}
-                            type="button"
-                            className="top-status-action"
-                            disabled={busy !== ""}
-                            onClick={() => void actTask(task, action.key)}
-                          >
-                            {action.label}
-                          </button>
-                        ))}
-                      </div>
-                    ) : null}
-                  </article>
-                );
-              })}
-            </div>
-          )}
+            )}
+            {status ? (
+              <p className="top-status-result" role="status">
+                {status}
+              </p>
+            ) : null}
+          </div>
+        ) : null}
+      </div>
 
-          {status ? (
-            <p className="top-status-result" role="status">
-              {status}
-            </p>
+      {/* 右上角：下载任务，只有存在未结束任务时才出现 */}
+      {showTasks ? (
+        <div className="orb downloads" ref={tasksRef}>
+          <button
+            type="button"
+            className={`orb-button${open === "tasks" ? " is-open" : ""}`}
+            aria-label="下载任务"
+            aria-haspopup="dialog"
+            aria-expanded={open === "tasks"}
+            data-tip="下载任务"
+            data-tip-side="bottom"
+            onClick={() => toggle("tasks")}
+          >
+            <SvgIcon className="orb-icon" src={navTasks} />
+          </button>
+
+          {open === "tasks" ? (
+            <div
+              className={`orb-popover is-right${closing ? " is-closing" : ""}`}
+              role="dialog"
+              aria-label="下载任务"
+            >
+              {activeTasks.length === 0 ? (
+                <p className="top-status-empty">当前没有排队或运行中的任务。</p>
+              ) : (
+                <div className="top-status-list">
+                  {activeTasks.map((task) => {
+                    const percent = taskPercent(task);
+                    const actions = TASK_ACTIONS.filter((action) =>
+                      task.allowedActions.includes(action.key)
+                    );
+                    return (
+                      <article className="top-status-item" key={task.id}>
+                        <div className="top-status-item-head">
+                          <span className="top-status-item-name">{task.name}</span>
+                          <span className="top-status-pill">{statusText(task.status)}</span>
+                        </div>
+                        <span className="top-status-meta">
+                          {task.phase}
+                          {percent === null ? "" : ` · ${percent}%`}
+                        </span>
+                        {percent === null ? null : (
+                          <div className="top-status-track" aria-hidden="true">
+                            <span className="top-status-fill" style={{ width: `${percent}%` }} />
+                          </div>
+                        )}
+                        {task.error ? <p className="top-status-error">{task.error.message}</p> : null}
+                        {actions.length > 0 ? (
+                          <div className="top-status-actions">
+                            {actions.map((action) => (
+                              <button
+                                key={action.key}
+                                type="button"
+                                className="top-status-action"
+                                disabled={busy !== ""}
+                                onClick={() => void actTask(task, action.key)}
+                              >
+                                {action.label}
+                              </button>
+                            ))}
+                          </div>
+                        ) : null}
+                      </article>
+                    );
+                  })}
+                </div>
+              )}
+              {status ? (
+                <p className="top-status-result" role="status">
+                  {status}
+                </p>
+              ) : null}
+            </div>
           ) : null}
         </div>
       ) : null}
-    </div>
+    </>
   );
 }

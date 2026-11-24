@@ -244,3 +244,138 @@
     transition: none;
   }
 }
+
+
+/* ------------------------------------------------------------------
+ * 两个独立的状态圆：左下角常驻的「运行实例」+ 右上角「下载任务」
+ * ------------------------------------------------------------------ */
+
+.orb {
+  position: absolute;
+  z-index: 12;
+}
+
+.orb.instances {
+  left: 20px;
+  bottom: 20px;
+}
+
+.orb.downloads {
+  right: 20px;
+  top: 20px;
+}
+
+.orb-button {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  border: 1px solid rgb(var(--app-shade-rgb) / 6%);
+  border-radius: 50%;
+  background: var(--neu-surface-2);
+  box-shadow: var(--neu-shadow);
+  color: var(--app-ink-2);
+  cursor: pointer;
+  transition:
+    box-shadow var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.orb-button:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--neu-shadow-lg);
+}
+
+.orb-button.is-open {
+  box-shadow: var(--neu-shadow-lg);
+}
+
+.orb-icon {
+  width: 18px;
+  height: 18px;
+  opacity: 0.8;
+}
+
+/* 显示器：边框跟着文字色，屏幕本身就是状态灯 */
+.orb-monitor {
+  position: relative;
+  width: 24px;
+  height: 17px;
+  border: 2px solid currentColor;
+  border-radius: 4px;
+}
+
+.orb-screen {
+  position: absolute;
+  inset: 2px;
+  display: grid;
+  place-items: center;
+  border-radius: 2px;
+  background: var(--orb-idle);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  transition: background-color var(--dur-normal) linear;
+}
+
+.orb-button.is-live .orb-screen {
+  background: var(--orb-live);
+}
+
+.orb-stand {
+  position: absolute;
+  left: 50%;
+  bottom: -5px;
+  width: 10px;
+  height: 2px;
+  border-radius: 2px;
+  transform: translateX(-50%);
+  background: currentColor;
+  opacity: 0.7;
+}
+
+/* 浮窗：实例的在按钮上方，下载的在按钮下方 */
+.orb-popover {
+  position: absolute;
+  bottom: calc(100% + 12px);
+  left: 0;
+  min-width: 260px;
+  max-width: 320px;
+  max-height: 340px;
+  overflow-y: auto;
+  padding: 12px;
+  border: 1px solid rgb(var(--app-shade-rgb) / 6%);
+  border-radius: 14px;
+  background: var(--neu-surface-2);
+  box-shadow: var(--neu-shadow-lg);
+  animation: orb-pop-in 160ms var(--ease-out) both;
+}
+
+.orb-popover.is-right {
+  left: auto;
+  right: 0;
+  top: calc(100% + 12px);
+  bottom: auto;
+}
+
+.orb-popover.is-closing {
+  animation: orb-pop-out 140ms ease-in both;
+  pointer-events: none;
+}
+
+@keyframes orb-pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+  }
+}
+
+@keyframes orb-pop-out {
+  to {
+    opacity: 0;
+    transform: translateY(4px) scale(0.99);
+  }
+}
