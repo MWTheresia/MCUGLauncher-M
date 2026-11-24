@@ -1,4 +1,6 @@
 import { useRef, useState } from "react";
+import pickaxeIcon from "../../assets/icons/tools/pickaxe.svg";
+import SvgIcon from "../../components/SvgIcon";
 import { resetWindow as resetWindowCommand } from "../../api/commands/settings";
 import { AppSelect } from "../../components/AppInput";
 import { useI18n } from "../../i18n";
@@ -15,7 +17,7 @@ interface AppearanceSettingsProps {
 /** 外观：主题（16 色板 + 明暗）、语言、主页对齐与窗口。 */
 export default function AppearanceSettings({ active }: AppearanceSettingsProps) {
   const { locale, setLocale, t, packs, labelOf, builtinCodes, importPack, removePack } = useI18n();
-  const { accent, mode, palettes, setAccent, setMode } = useTheme();
+  const { accent, mode, logo, palettes, materials, setAccent, setMode, setLogoMaterial } = useTheme();
   const [languageStatus, setLanguageStatus] = useState("");
   const [windowStatus, setWindowStatus] = useState("");
   const homeAlignment = useHomeAlignment();
@@ -71,6 +73,45 @@ export default function AppearanceSettings({ active }: AppearanceSettingsProps) 
           </div>
         </div>
 
+
+        <div className="setting-field">
+          <span className="setting-field-label">背景图标</span>
+          <div className="setting-field-body">
+            <div className="logo-materials" role="radiogroup" aria-label="背景图标材质色">
+              <button
+                type="button"
+                role="radio"
+                aria-checked={logo === ""}
+                aria-label="默认"
+                title="默认：保留 logo 原色"
+                className={`logo-material${logo === "" ? " is-selected" : ""}`}
+                onClick={() => setLogoMaterial("")}
+              >
+                <span className="logo-material-icon logo-material-icon-default" />
+                <span className="logo-material-label">默认</span>
+              </button>
+              {materials.map((material) => (
+                <button
+                  key={material.id}
+                  type="button"
+                  role="radio"
+                  aria-checked={logo === material.id}
+                  aria-label={material.label}
+                  title={`${material.label} · 挖掘等级 ${material.level}`}
+                  className={`logo-material${logo === material.id ? " is-selected" : ""}`}
+                  style={{ ["--material-color" as string]: material.base }}
+                  onClick={() => setLogoMaterial(material.id)}
+                >
+                  <SvgIcon className="logo-material-icon" src={pickaxeIcon} />
+                  <span className="logo-material-label">{material.label}</span>
+                </button>
+              ))}
+            </div>
+            <span className="setting-field-note">
+              只换背景那枚大图标的颜色，界面主色不受影响；按挖掘等级排列：木/金 0、石 1、铁 2、钻石 3、下界合金 4。
+            </span>
+          </div>
+        </div>
         <div className="setting-field">
           <span className="setting-field-label">明暗模式</span>
           <div className="setting-field-body">

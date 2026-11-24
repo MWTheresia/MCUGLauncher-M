@@ -1,10 +1,12 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import {
   ACCENTS,
+  MATERIALS,
   applyTheme,
   loadTheme,
   saveTheme,
   type AccentPalette,
+  type MaterialPalette,
   type ThemeMode,
   type ThemeState,
 } from "./palettes";
@@ -12,9 +14,13 @@ import {
 interface ThemeContextValue {
   accent: string;
   mode: ThemeMode;
+  /** 背景图标的材质色，空串表示默认 */
+  logo: string;
   palettes: AccentPalette[];
+  materials: MaterialPalette[];
   setAccent: (id: string) => void;
   setMode: (mode: ThemeMode) => void;
+  setLogoMaterial: (id: string) => void;
 }
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
@@ -39,9 +45,22 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     setState((current) => ({ ...current, mode }));
   }, []);
 
+  const setLogoMaterial = useCallback((logo: string) => {
+    setState((current) => ({ ...current, logo }));
+  }, []);
+
   const value = useMemo<ThemeContextValue>(
-    () => ({ accent: state.accent, mode: state.mode, palettes: ACCENTS, setAccent, setMode }),
-    [state.accent, state.mode, setAccent, setMode],
+    () => ({
+      accent: state.accent,
+      mode: state.mode,
+      logo: state.logo,
+      palettes: ACCENTS,
+      materials: MATERIALS,
+      setAccent,
+      setMode,
+      setLogoMaterial,
+    }),
+    [state.accent, state.mode, state.logo, setAccent, setMode, setLogoMaterial],
   );
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;

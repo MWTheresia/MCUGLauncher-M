@@ -34,15 +34,39 @@ export const ACCENTS: AccentPalette[] = [
   { id: "coffee", label: "咖啡", base: "#b45309" },
 ];
 
+/**
+ * 材质：只用来给背景那枚大图标换色，不影响界面主色。
+ * 顺序按 Minecraft 的挖掘等级（harvest level）排：木/金 0、石 1、铁 2、钻石 3、下界合金 4。
+ */
+export interface MaterialPalette {
+  id: string;
+  label: string;
+  level: number;
+  base: string;
+  /** 该材质的明度系数：石/下界合金压暗，铁提亮，避免同色相的两档看起来一样 */
+  tone: number;
+}
+
+export const MATERIALS: MaterialPalette[] = [
+  { id: "wood", label: "木", level: 0, base: "#a9773f", tone: 0.95 },
+  { id: "gold", label: "金", level: 0, base: "#e0b23c", tone: 1.08 },
+  { id: "stone", label: "石", level: 1, base: "#7d838a", tone: 0.78 },
+  { id: "iron", label: "铁", level: 2, base: "#dadfe4", tone: 1.16 },
+  { id: "diamond", label: "钻石", level: 3, base: "#3fb9ad", tone: 1 },
+  { id: "netherite", label: "下界合金", level: 4, base: "#6b5a76", tone: 0.86 },
+];
+
 export interface ThemeState {
   accent: string;
   mode: ThemeMode;
+  /** 背景图标的材质色；空串表示默认（保留 logo 原色） */
+  logo: string;
 }
 
 const STORAGE_KEY = "mcugl.theme.v1";
 const DARK_SURFACE = "#0c1117";
 
-export const DEFAULT_THEME: ThemeState = { accent: "blue", mode: "light" };
+export const DEFAULT_THEME: ThemeState = { accent: "blue", mode: "light", logo: "" };
 
 /* ---------------- 颜色计算 ---------------- */
 
@@ -149,7 +173,8 @@ export function loadTheme(): ThemeState {
     const parsed = JSON.parse(raw) as Partial<ThemeState>;
     const accent = ACCENTS.some((item) => item.id === parsed.accent) ? parsed.accent! : DEFAULT_THEME.accent;
     const mode: ThemeMode = parsed.mode === "dark" ? "dark" : "light";
-    return { accent, mode };
+    const logo = MATERIALS.some((item) => item.id === parsed.logo) ? parsed.logo! : "";
+    return { accent, mode, logo };
   } catch {
     return { ...DEFAULT_THEME };
   }
@@ -168,8 +193,56 @@ export function applyTheme(state: ThemeState): void {
   const root = document.documentElement;
   const palette = ACCENTS.find((item) => item.id === state.accent) ?? ACCENTS[0];
   root.dataset.theme = state.mode;
+  const filter = logoFilterFor(state);
+  if (filter) {
+    root.style.setProperty("--shell-logo-filter", filter);
+    /* 换了材质色之后要压得更实一点，否则水印太淡看不出颜色差别 */
+    root.style.setProperty("--shell-logo-opacity", state.mode === "dark" ? "0.2" : "0.28");
+  } else {
+    root.style.removeProperty("--shell-logo-filter");
+    root.style.removeProperty("--shell-logo-opacity");
+  }
+
   const vars = buildAccentVars(palette.base, state.mode);
   for (const [name, value] of Object.entries(vars)) {
     root.style.setProperty(name, value);
   }
+}
+
+/* ---------------- 背景图标的配色 ---------------- */
+
+function hueOf(hex: string): number {
+  const { r, g, b } = hexToRgb(hex);
+  const rn = r / 255;
+  const gn = g / 255;
+  const bn = b / 255;
+  const max = Math.max(rn, gn, bn);
+  const min = Math.min(rn, gn, bn);
+  const delta = max - min;
+  if (delta === 0) return 0;
+  let hue = 0;
+  if (max === rn) hue = ((gn - bn) / delta) % 6;
+  else if (max === gn) hue = (bn - rn) / delta + 2;
+  else hue = (rn - gn) / delta + 4;
+  return (hue * 60 + 360) % 360;
+}
+
+/**
+ * 背景大图标只换色、不换形：
+ * 先用 sepia 把彩图压成单色，再用 hue-rotate 旋到目标材质色，最后补一点亮度。
+ * 返回 null 表示「默认」，交给 CSS 里的 --shell-logo-filter 兜底。
+ */
+export function logoFilterFor(state: ThemeState): string | null {
+  const material = MATERIALS.find((item) => item.id === state.logo);
+  if (!material) return null;
+  /* sepia 的基准色约在 35°，因此旋转量要减掉它 */
+  const rotate = Math.round(hueOf(material.base) - 35);
+  const brightness = (state.mode === "dark" ? 1.7 : 0.95) * material.tone;
+  const saturate = state.mode === "dark" ? 2.6 : 3.2;
+  return [
+    "sepia(1)",
+    "saturate(" + saturate + ")",
+    "hue-rotate(" + rotate + "deg)",
+    "brightness(" + brightness + ")",
+  ].join(" ");
 }
