@@ -18,6 +18,7 @@ import Markdown from "../components/Markdown";
 import Modal from "../components/Modal";
 import SvgIcon from "../components/SvgIcon";
 import { useLauncher } from "../state/launcher";
+import { useServerStatusPreview } from "../shell/topStatusPreference";
 import BookmarksSection from "./discover/BookmarksSection";
 import "./DiscoverPage.css";
 
@@ -54,12 +55,6 @@ const NAV_GROUPS: NavItem[][] = [
   ],
 ];
 
-function pingText(ping: ServerPingInfo | undefined): string {
-  if (!ping) return "尚未查询";
-  if (!ping.online) return "离线";
-  return `${ping.players}/${ping.max} 人 · ${ping.ping} ms`;
-}
-
 /** 发现：服务器收藏、群公告、群友推荐与语录（原主页右栏内容）。 */
 export default function DiscoverPage({
   section,
@@ -75,14 +70,67 @@ export default function DiscoverPage({
   const [dialog, setDialog] = useState<DialogState | null>(null);
   const [announcement, setAnnouncement] = useState<AnnouncementInfo | null>(null);
   const [menu, setMenu] = useState<MenuState | null>(null);
+  /** 卡片右下角「更多」菜单当前展开的地址 */
+  const [openMenu, setOpenMenu] = useState<string | null>(null);
+  /** 二次确认删除的地址 */
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+  /**
+   * 开发者选项里的服务器状态预览：
+   * 演示内核的 ping_server 没实现，实际只可能是离线，所以这里直接覆盖掉真实结果，
+   * 「查询中」用一个永远 pending 的空值表示。
+   */
+  const serverPreview = useServerStatusPreview();
+  const previewPing: ServerPingInfo | undefined =
+    serverPreview === "online"
+      ? {
+          id: "preview",
+          online: true,
+          players: 12,
+          max: 100,
+          ping: 42,
+          motd: "演示服务器 · 不会真正连接",
+          version: "1.21.1",
+          error: "",
+        }
+      : serverPreview === "offline"
+        ? {
+            id: "preview",
+            online: false,
+            players: 0,
+            max: 0,
+            ping: 0,
+            motd: "",
+            version: "",
+            error: "预览：已强制为离线",
+          }
+        : undefined;
+  const pingOf = (address: string): ServerPingInfo | undefined =>
+    serverPreview === "pending" ? undefined : previewPing ?? pings[address];
 
   useEffect(() => {
     if (!servers) return;
     let alive = true;
     for (const server of servers) {
-      void pingServer(server.address).then((info) => {
-        if (alive) setPings((previous) => ({ ...previous, [info.id]: info }));
-      });
+      void pingServer(server.address)
+        .then((info) => {
+          if (alive) setPings((previous) => ({ ...previous, [info.id]: info }));
+        })
+        .catch(() => {
+          if (!alive) return;
+          setPings((previous) => ({
+            ...previous,
+            [server.address]: {
+              id: server.address,
+              online: false,
+              players: 0,
+              max: 0,
+              ping: 0,
+              motd: "",
+              version: "",
+              error: "内核未提供 ping_server",
+            },
+          }));
+        });
     }
     return () => {
       alive = false;
@@ -138,6 +186,16 @@ export default function DiscoverPage({
     setStatus(result.message);
   };
 
+  /** 地址是这张卡最重要的信息，点一下就能复制 */
+  const copyAddress = async (address: string) => {
+    try {
+      await navigator.clipboard.writeText(address);
+      setStatus(`已复制 ${address}`);
+    } catch {
+      setStatus("复制失败，请手动选中地址");
+    }
+  };
+
   const deleteServer = async (server: SavedServerInfo) => {
     const result = await deleteServerCommand(server.id);
     setPings((previous) => {
@@ -150,8 +208,25 @@ export default function DiscoverPage({
   };
 
   const queryServer = async (server: SavedServerInfo) => {
-    const info = await pingServer(server.address);
-    setPings((previous) => ({ ...previous, [info.id]: info }));
+    try {
+      const info = await pingServer(server.address);
+      setPings((previous) => ({ ...previous, [info.id]: info }));
+    } catch (error) {
+      /* 内核没实现 / 网络不通：落到「离线」而不是一直转圈 */
+      setPings((previous) => ({
+        ...previous,
+        [server.address]: {
+          id: server.address,
+          online: false,
+          players: 0,
+          max: 0,
+          ping: 0,
+          motd: "",
+          version: "",
+          error: error instanceof Error ? error.message : String(error),
+        },
+      }));
+    }
     setStatus("服务器状态已刷新。");
   };
 
@@ -226,9 +301,18 @@ export default function DiscoverPage({
                   <span className="spacer" />
                   <span className="muted">
                     {servers.length > 0
-                      ? `${servers.filter((server) => pings[server.address]?.online).length} 在线 · ${
-                          servers.filter((server) => !pings[server.address]?.online).length
-                        } 离线`
+                      ? (() => {
+                          const online = servers.filter((s) => pingOf(s.address)?.online).length;
+                          const offline = servers.filter((s) => Boolean(pingOf(s.address)) && !pingOf(s.address)?.online).length;
+                          const pending = servers.length - online - offline;
+                          return [
+                            `${online} 在线`,
+                            offline > 0 ? `${offline} 离线` : null,
+                            pending > 0 ? `${pending} 查询中` : null,
+                          ]
+                            .filter(Boolean)
+                            .join(" · ");
+                        })()
                       : ""}
                   </span>
                   <button type="button" className="btn link" onClick={() => openServerDialog()}>
@@ -243,48 +327,157 @@ export default function DiscoverPage({
                 ) : (
                   <div className="server-grid">
                     {servers.map((server) => {
-                      const ping = pings[server.address];
+                      const ping = pingOf(server.address);
+                      const state = !ping ? "pending" : ping.online ? "online" : "offline";
+                      const instanceName = server.instanceId
+                        ? instanceCatalog.items.find((item) => item.id === server.instanceId)?.displayName ??
+                          server.instanceId
+                        : "";
+                      const confirming = confirmDelete === server.address;
                       return (
-                        <article className="server-card" key={server.address}>
-                          <div className="server-head">
-                            <span className={`server-icon ${ping?.online ? "online" : ""}`}>
-                          <SvgIcon src={navServers} className="server-icon-glyph" />
-                        </span>
-                            <div className="stack" style={{ gap: 2 }}>
-                              <span className="server-name">
-                                {server.name.length > 0 ? server.name : server.address}
+                        <article className="server-card" key={server.address} data-state={state}>
+                          <div className="server-card-head">
+                            <span className={`server-icon ${state === "online" ? "online" : ""}`}>
+                              <SvgIcon src={navServers} className="server-icon-glyph" />
+                            </span>
+                            <span className="server-name">
+                              {server.name.length > 0 ? server.name : server.address}
+                            </span>
+                            <button
+                              type="button"
+                              className="server-status"
+                              data-state={state}
+                              onClick={() => void queryServer(server)}
+                              title="点击重新查询"
+                            >
+                              <span className="server-status-dot" />
+                              {state === "pending" ? (
+                                "查询中…"
+                              ) : state === "online" ? (
+                                `${ping?.ping ?? 0} ms`
+                              ) : (
+                                "离线"
+                              )}
+                            </button>
+                          </div>
+
+                          <button
+                            type="button"
+                            className="server-address"
+                            onClick={() => void copyAddress(server.address)}
+                            title="点击复制地址"
+                          >
+                            {server.address}
+                          </button>
+
+                          <div className="server-meta">
+                            <span className={`server-chip${instanceName ? "" : " is-empty"}`}>
+                              {instanceName || "未绑定实例"}
+                            </span>
+                            {ping?.online && ping.motd ? (
+                              <span className="server-motd">{ping.motd}</span>
+                            ) : null}
+                            {ping?.online ? (
+                              <span className="server-players">
+                                {ping.players}/{ping.max}
                               </span>
-                              <span className="muted">{pingText(ping)}</span>
+                            ) : null}
+                          </div>
+
+                          <div className="server-actions">
+                            <button
+                              type="button"
+                              className="btn soft server-cta"
+                              onClick={() => void openServer(server)}
+                            >
+                              {instanceName ? "启动到服务器" : "选择实例"}
+                            </button>
+                            <div className="server-more">
+                              <button
+                                type="button"
+                                className="btn ghost server-more-btn"
+                                aria-label="更多操作"
+                                aria-haspopup="menu"
+                                aria-expanded={openMenu === server.address}
+                                onClick={() =>
+                                  setOpenMenu(openMenu === server.address ? null : server.address)
+                                }
+                              >
+                                ⋯
+                              </button>
+                              {openMenu === server.address ? (
+                                <div className="server-menu" role="menu">
+                                  <button
+                                    type="button"
+                                    role="menuitem"
+                                    onClick={() => {
+                                      setOpenMenu(null);
+                                      void queryServer(server);
+                                    }}
+                                  >
+                                    查询状态
+                                  </button>
+                                  <button
+                                    type="button"
+                                    role="menuitem"
+                                    onClick={() => {
+                                      setOpenMenu(null);
+                                      void copyAddress(server.address);
+                                    }}
+                                  >
+                                    复制地址
+                                  </button>
+                                  <button
+                                    type="button"
+                                    role="menuitem"
+                                    onClick={() => {
+                                      setOpenMenu(null);
+                                      openServerDialog(server);
+                                    }}
+                                  >
+                                    编辑
+                                  </button>
+                                  <button
+                                    type="button"
+                                    role="menuitem"
+                                    className="is-danger"
+                                    onClick={() => {
+                                      setOpenMenu(null);
+                                      setConfirmDelete(server.address);
+                                    }}
+                                  >
+                                    删除
+                                  </button>
+                                </div>
+                              ) : null}
                             </div>
                           </div>
-                          <span className="muted">{server.address}</span>
-                          <span className="muted">
-                            {server.instanceId
-                              ? `实例 · ${
-                                  instanceCatalog.items.find((item) => item.id === server.instanceId)?.displayName ??
-                                  server.instanceId
-                                }`
-                              : "未绑定实例"}
-                          </span>
-                          <span className="muted">{ping ? (ping.online ? ping.motd : "无法连接") : "等待查询"}</span>
-                          <div className="server-actions">
-                            <button type="button" className="btn link" onClick={() => void openServer(server)}>
-                              打开
-                            </button>
-                            <button type="button" className="btn link" onClick={() => void queryServer(server)}>
-                              查询
-                            </button>
-                            <button type="button" className="btn link" onClick={() => openServerDialog(server)}>
-                              编辑
-                            </button>
-                            <button type="button" className="btn link" onClick={() => void deleteServer(server)}>
-                              删除
-                            </button>
-                          </div>
+
+                          {confirming ? (
+                            <div className="server-confirm" role="alertdialog">
+                              <span>删除这台服务器？</span>
+                              <button
+                                type="button"
+                                className="btn ghost"
+                                onClick={() => setConfirmDelete(null)}
+                              >
+                                取消
+                              </button>
+                              <button
+                                type="button"
+                                className="btn ghost is-danger"
+                                onClick={() => {
+                                  setConfirmDelete(null);
+                                  void deleteServer(server);
+                                }}
+                              >
+                                确认删除
+                              </button>
+                            </div>
+                          ) : null}
                         </article>
                       );
-                    })}
-                  </div>
+                    })}                  </div>
                 )}
               </section>
             ) : null}

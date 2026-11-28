@@ -187,3 +187,47 @@
   flex-wrap: wrap;
   gap: 8px;
 }
+
+/* 列表末尾的「添加账号」：和账号卡同尺寸，虚线框 + 加号，跟随主题主色 */
+.account-card-add {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 148px;
+  padding: 14px;
+  border: 2px dashed rgb(var(--app-accent-rgb) / 55%);
+  border-radius: var(--radius-card);
+  background: transparent;
+  box-shadow: none;
+  color: var(--app-accent-deep);
+  cursor: pointer;
+  transition:
+    border-color var(--dur-fast) linear,
+    background-color var(--dur-fast) linear,
+    color var(--dur-fast) linear;
+}
+
+.account-card-add:hover {
+  border-color: var(--app-accent);
+  background: var(--app-accent-wash);
+  color: var(--app-accent);
+}
+
+.account-card-add-plus {
+  font-size: 30px;
+  line-height: 1;
+  font-weight: 300;
+}
+
+
+/* 列表视图下压成一行 */
+.account-list.is-list .account-card-add {
+  min-height: 56px;
+  justify-content: flex-start;
+  padding: 10px 16px;
+}
+
+.account-list.is-list .account-card-add-plus {
+  font-size: 22px;
+}

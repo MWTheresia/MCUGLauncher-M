@@ -20,6 +20,9 @@ import {
   setTopStatusForced,
   useDownloadAnimForced,
   useInstancePreview,
+  useServerStatusPreview,
+  setServerStatusPreview,
+  type ServerStatusPreview,
   useTopStatusForced,
   setDownloadAnimForced,
   type InstancePreview,
@@ -47,6 +50,7 @@ function fileName(path: string): string {
 export default function DeveloperSettings({ active }: DeveloperSettingsProps) {
   const forceTasks = useTopStatusForced("tasks");
   const instancePreview = useInstancePreview();
+  const serverPreview = useServerStatusPreview();
   const downloadAnimForced = useDownloadAnimForced();
   const { say, statusAt } = useSettingsStatus();
   const { resourceVersions, refreshSettingsResources } = useSettingsData();
@@ -307,7 +311,7 @@ export default function DeveloperSettings({ active }: DeveloperSettingsProps) {
             <div className="segmented" role="radiogroup" aria-label="实例状态灯预览">
               {(
                 [
-                  [0, "按实际"],
+                  [0, "0 个实例"],
                   [1, "1 个实例"],
                   [2, "2 个实例"],
                 ] as const
@@ -327,7 +331,36 @@ export default function DeveloperSettings({ active }: DeveloperSettingsProps) {
           }
         >
           <span className="muted">
-            选「1 个实例」是绿屏无数字，「2 个实例」是绿屏带数字；只看效果，不会真的启动游戏。
+            「0 个」是红屏、「1 个」是绿屏无数字、「2 个」是绿屏带数字；只看效果，不会真的启动游戏。
+          </span>
+        </SettingRow>
+        <SettingRow
+          title={<>服务器状态预览</>}
+          control={
+            <div className="segmented" role="radiogroup" aria-label="服务器状态预览">
+              {(
+                [
+                  ["online", "在线"],
+                  ["offline", "离线"],
+                  ["pending", "查询中"],
+                ] as const
+              ).map(([value, label]) => (
+                <button
+                  key={value}
+                  type="button"
+                  role="radio"
+                  aria-checked={serverPreview === value}
+                  className={`segmented-option${serverPreview === value ? " is-selected" : ""}`}
+                  onClick={() => setServerStatusPreview(value as ServerStatusPreview)}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          }
+        >
+          <span className="muted">
+            演示内核没有实现 ping，实际状态只会是离线；这里强制切换成在线 / 离线 / 查询中，用来对比三种状态的视觉差异。
           </span>
         </SettingRow>
       </SettingsCard>

@@ -1,0 +1,362 @@
+/* 「发现」页：左右栏骨架由 SplitPage 提供，这里只排右栏内容与底部名言 */
+
+/* 右栏内容容器：全透明背景的圆角矩形，高度只占右栏一部分，底部留给群友名言 */
+.discover-content {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 6px;
+  border-radius: 12px;
+  background: transparent;
+}
+
+/* 群友名言常驻右栏底部，不随内容滚动 */
+.discover-quote {
+  flex: none;
+  margin-top: 12px;
+}
+
+/* ---------- 群公告列表 ---------- */
+
+.ann-row {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  width: 100%;
+  padding: 9px 10px;
+  border: 0;
+  border-radius: 9px;
+  background: rgb(var(--app-fill-rgb) / 34%);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 120ms linear;
+}
+
+.ann-row:hover {
+  background: rgb(var(--app-fill-rgb) / 60%);
+}
+
+.ann-title {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--app-ink);
+}
+
+.ann-body {
+  font-size: 11px;
+  color: var(--app-ink-2);
+}
+
+/* ---------- 服务器卡片 ---------- */
+
+.server-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* 服务器卡：和其余界面一致的扁平表面，去掉原来的毛玻璃 */
+.server-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 264px;
+  padding: 12px;
+  border: 1px solid rgb(var(--app-shade-rgb) / 8%);
+  border-radius: 12px;
+  background: var(--neu-surface);
+  transition: border-color var(--dur-fast) linear;
+}
+
+.server-card:hover {
+  border-color: rgb(var(--app-shade-rgb) / 16%);
+}
+
+.server-card-head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+}
+
+.server-icon {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: var(--app-sunken);
+  color: var(--app-ink-2);
+}
+
+.server-icon-glyph {
+  width: 16px;
+  height: 16px;
+}
+
+.server-icon.online {
+  background: rgb(63 185 173 / 16%);
+  color: #2f8f7f;
+}
+
+.server-name {
+  overflow: hidden;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* 状态徽标：点一下就是重新查询，不再单独放一个「查询」按钮 */
+.server-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--app-sunken);
+  color: var(--app-ink-3);
+  font-size: 11px;
+  cursor: pointer;
+  transition: background-color var(--dur-fast) linear;
+}
+
+.server-status:hover {
+  background: var(--app-hover-fill);
+}
+
+.server-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.server-status[data-state="online"] {
+  background: rgb(63 185 173 / 16%);
+  color: #2b8a7a;
+}
+
+.server-status[data-state="offline"] {
+  background: rgb(214 122 122 / 16%);
+  color: #b06262;
+}
+
+.server-status[data-state="pending"] .server-status-dot {
+  animation: server-pulse 1s ease-in-out infinite;
+}
+
+@keyframes server-pulse {
+  50% {
+    opacity: 0.25;
+  }
+}
+
+/* 地址是主信息：等宽字体、可点击复制 */
+.server-address {
+  overflow: hidden;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--app-ink-2);
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 12px;
+  text-align: left;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+.server-address:hover {
+  color: var(--app-accent);
+}
+
+.server-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  min-height: 20px;
+  font-size: 11px;
+}
+
+.server-chip {
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: var(--app-sunken);
+  color: var(--app-ink-2);
+}
+
+.server-chip.is-empty {
+  border: 1px dashed rgb(var(--app-shade-rgb) / 22%);
+  background: transparent;
+  color: var(--app-ink-3);
+}
+
+.server-motd {
+  flex: 1 0 100%;
+  order: 3;
+  overflow: hidden;
+  max-width: 100%;
+  color: var(--app-ink-3);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.server-players {
+  order: 2;
+  margin-left: auto;
+  color: var(--app-ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.server-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.server-cta {
+  flex: 1;
+  justify-content: center;
+  padding-block: 6px;
+  font-size: 12px;
+}
+
+.server-more {
+  position: relative;
+}
+
+.server-more-btn {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  font-size: 15px;
+  line-height: 1;
+}
+
+.server-menu {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 6px);
+  z-index: 20;
+  display: grid;
+  min-width: 132px;
+  padding: 4px;
+  border: 1px solid rgb(var(--app-shade-rgb) / 10%);
+  border-radius: 10px;
+  background: var(--app-card);
+  box-shadow: var(--neu-shadow-lg);
+}
+
+.server-menu button {
+  padding: 7px 10px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--app-ink);
+  font-size: 12px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.server-menu button:hover {
+  background: var(--app-hover-fill);
+}
+
+.server-menu .is-danger,
+.server-confirm .is-danger {
+  color: #b4514f;
+}
+
+/* 删除确认：就地展开，不弹模态 */
+.server-confirm {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: rgb(214 122 122 / 10%);
+  color: var(--app-ink-2);
+  font-size: 12px;
+}
+
+.server-confirm span {
+  flex: 1;
+}
+
+
+/* ---------- 公告 ---------- */
+
+.announcement-title {
+  font-weight: 600;
+  word-break: break-word;
+}
+
+.announcement-image {
+  max-width: 100%;
+  max-height: 180px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+/* ---------- 推荐 ---------- */
+
+.rec-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 9px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--app-hover-fill);
+}
+
+.rec-row:last-child {
+  border-bottom: 0;
+}
+
+.rec-icon {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 7px;
+  background: var(--app-accent-deep);
+  color: #fff;
+  font-size: 13px;
+}
+
+.rec-icon.material {
+  background: #c9822b;
+}
+
+.rec-icon.shader {
+  background: #7b5ac8;
+}
+
+.rec-name {
+  font-weight: 600;
+}
+
+/* ---------- 语录 ---------- */
+
+.quote-card {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: start;
+}
+
+.quote-mark {
+  font-family: var(--font-quote);
+  font-size: 34px;
+  line-height: 1;
+  color: var(--app-accent-soft);
+}
+
+.quote-text {
+  font-size: 15px;
+  line-height: 1.6;
+}

@@ -159,8 +159,8 @@ export default function TopStatus() {
     }
   };
 
-  const realCount = runningGames.length;
-  const count = instancePreview > 0 ? instancePreview : realCount;
+  /* 开发者选项里固定成 0 / 1 / 2，不再跟随真实进程 */
+  const count = instancePreview;
   const live = count > 0;
 
   /*

@@ -66,7 +66,10 @@ const PREVIEW_KEY = "mcugl.topStatusPreviewInstances";
  */
 const previewStorage = () => window.sessionStorage;
 
-/** 实例灯的预览数量：0 表示不预览（按真实进程），1 / 2 表示钉死成这个数量。 */
+/**
+ * 实例灯的预览数量：固定显示 0 / 1 / 2 个运行中的实例。
+ * 没有「按实际」这一档——本项目只做界面展示，示例内核也不会凭空跑起实例。
+ */
 export type InstancePreview = 0 | 1 | 2;
 
 export function getInstancePreview(): InstancePreview {
@@ -111,6 +114,39 @@ export function useDownloadAnimForced(): boolean {
 
   useEffect(() => {
     const listener = () => setValue(isDownloadAnimForced());
+    listeners.add(listener);
+    return () => {
+      listeners.delete(listener);
+    };
+  }, []);
+
+  return value;
+}
+/* ---------------- 服务器状态预览（开发用） ---------------- */
+
+/**
+ * 演示服务器在界面上的状态：在线 / 离线 / 查询中。
+ * 没有「按实际」这一档——演示内核的 ping_server 没实现，实际只会是离线。
+ */
+export type ServerStatusPreview = "online" | "offline" | "pending";
+
+const SERVER_PREVIEW_KEY = "mcugl.serverStatusPreview";
+
+export function getServerStatusPreview(): ServerStatusPreview {
+  const raw = previewStorage().getItem(SERVER_PREVIEW_KEY);
+  return raw === "online" || raw === "pending" ? raw : "offline";
+}
+
+export function setServerStatusPreview(value: ServerStatusPreview): void {
+  previewStorage().setItem(SERVER_PREVIEW_KEY, value);
+  listeners.forEach((listener) => listener());
+}
+
+export function useServerStatusPreview(): ServerStatusPreview {
+  const [value, setValue] = useState<ServerStatusPreview>(() => getServerStatusPreview());
+
+  useEffect(() => {
+    const listener = () => setValue(getServerStatusPreview());
     listeners.add(listener);
     return () => {
       listeners.delete(listener);

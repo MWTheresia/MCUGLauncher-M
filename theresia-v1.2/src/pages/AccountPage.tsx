@@ -196,9 +196,7 @@ export default function AccountPage() {
                       列表
                     </button>
                   </div>
-                  <button type="button" className="btn primary" onClick={openAdd}>
-                    + 添加账号
-                  </button>
+
                 </div>
               </header>
 
@@ -254,6 +252,17 @@ export default function AccountPage() {
                       </article>
                     );
                   })}
+                  <button
+                    type="button"
+                    className="account-card account-card-add"
+                    aria-label="添加账号"
+                    title="添加账号"
+                    onClick={openAdd}
+                  >
+                    <span className="account-card-add-plus" aria-hidden="true">
+                      +
+                    </span>
+                  </button>
                 </div>
               )}
             </div>
